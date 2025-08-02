@@ -1,0 +1,110 @@
+/* assets/css/diary/grid.css */
+
+.gsa-scheduler-grid {
+    height: 100%; /* Make the grid fill its container */
+    overflow-y: auto; /* Make the grid itself scrollable vertically */
+    display: grid;
+    position: relative; /* For positioning events */
+    min-width: max-content; /* Ensure grid doesn't shrink below content */
+}
+
+/* --- Sticky Headers and Time Column --- */
+.gsa-fitter-header, .gsa-time-label, .gsa-header-corner, .gsa-day-header {
+    position: sticky;
+    background-color: #f8f9fa;
+    z-index: 20;
+}
+
+.gsa-fitter-header {
+    grid-row: 1;
+    top: 0;
+    text-align: center;
+    padding: 0.5rem;
+    font-size: 1.1em; /* Slightly larger for headers */
+    font-weight: bold; /* Ensure bold text */
+    border-bottom: 1px solid #ccc;
+    border-right: 1px solid #ddd;
+}
+.gsa-fitter-header:last-of-type {
+    border-right: none;
+}
+
+.gsa-header-corner {
+    grid-column: 1;
+    grid-row: 1;
+    top: 0;
+    left: 0;
+    z-index: 30; /* Above other sticky elements */
+    border-bottom: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+}
+
+/* Day View Specific Styles */
+.gsa-time-label { /* Only used in Day View */
+    grid-column: 1;
+    text-align: center; /* Center time labels */
+    padding: 0.25em 0; /* Reduced padding for 30-min slots */
+    font-size: 0.7em; /* Smaller font for 30-min labels */
+    color: #666;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #eee;
+    min-height: 40px; /* Ensure consistent height for 30-min slots */
+    display: flex; /* Use flexbox to center content vertically */
+    align-items: center;
+    justify-content: center;
+}
+.gsa-time-label:nth-of-type(even) { /* Half-hour line dotted */
+    border-bottom-style: dotted;
+}
+
+.gsa-grid-cell { /* Only used in Day View */
+    padding: 8px; /* Added padding for breathing room */
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #eee; /* Keep subtle lines for time slots */
+    min-height: 40px; /* Ensure consistent height for 30-min slots */
+    cursor: pointer;
+}
+.gsa-grid-cell:hover {
+    background-color: #f0f8ff; /* AliceBlue, for affordance */
+}
+
+/* Week View Specific Styles */
+.gsa-day-header { /* Sticky day label in week view */
+    grid-column: 1;
+    left: 0;
+    text-align: left;
+    padding: 0.5rem;
+    font-size: 1.1em; /* Slightly larger for headers */
+    font-weight: bold;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #eee;
+    background-color: #f8f9fa; /* Match other sticky headers */
+    z-index: 25; /* Above cells, below fitter header */
+}
+
+.gsa-fitter-cell { /* Cells in the week view */
+    padding: 0.5rem;
+    min-height: 120px; /* Ensure cells have enough height for events */
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #eee;
+}
+
+/* Remove right border on last column */
+.gsa-fitter-cell:last-of-type, .gsa-grid-cell:last-of-type {
+    border-right: none;
+}
+
+/* Highlight for today's date */
+.gsa-today {
+    background-color: #e0f7fa !important; /* Light blue, important to override other backgrounds */
+    border-color: #a7d9ed !important;
+}
+
+/* Focus styles for keyboard navigation */
+.gsa-grid-cell:focus,
+.gsa-fitter-cell:focus,
+.gsa-event:focus,
+.gsa-event-item:focus {
+    outline: 2px solid #4e73df; /* Highlight with primary color */
+    outline-offset: -2px; /* Keep outline inside the element */
+}

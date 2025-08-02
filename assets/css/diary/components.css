@@ -1,0 +1,71 @@
+/* assets/css/diary/components.css */
+
+/* New styles for date navigation */
+#gsa-diary-date-display {
+    font-weight: bold;
+    font-size: 1.4em;
+    color: #333;
+    flex-grow: 1;
+    text-align: center;
+}
+
+#gsa-add-new-job-btn {
+    margin-left: auto; /* Pushes this button to the far right */
+}
+
+/* View toggle buttons */
+.gsa-view-toggle-group {
+    display: flex;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-left: 1rem;
+}
+.gsa-view-btn {
+    background-color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border-left: 1px solid #ccc;
+}
+.gsa-view-btn:first-child {
+    border-left: none;
+}
+.gsa-view-btn.active {
+    background-color: #4e73df;
+    color: white;
+    font-weight: bold;
+}
+
+/* Style for the cancel button to be less prominent */
+#gsa-newjob-cancel {
+    background-color: #6c757d; /* A neutral grey */
+}
+
+/* Style for the delete button to indicate a destructive action */
+#gsa-newjob-delete {
+    background-color: #e74a3b;
+}
+
+/* Styles for the new checkbox group */
+.gos-checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem; /* Row gap, column gap */
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+}
+.gos-checkbox-group label {
+    display: flex;
+    align-items: center;
+    font-weight: normal; /* Override bold from .form-field label */
+    font-size: 0.9em;
+    color: #333;
+    cursor: pointer;
+}
+.gos-checkbox-group input[type="checkbox"] {
+    margin-right: 0.5rem;
+    cursor: pointer;
+}

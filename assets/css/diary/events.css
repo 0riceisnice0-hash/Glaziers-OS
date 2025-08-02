@@ -1,0 +1,96 @@
+/* assets/css/diary/events.css */
+
+/* Container for absolutely positioned events in Day View */
+.gsa-event-container {
+    position: absolute;
+    top: 41px; /* Height of fitter header (approx) */
+    left: 80px; /* Width of time axis */
+    right: 0;
+    bottom: 0;
+    pointer-events: none; /* Allow clicks to pass through to grid cells */ /* This is overridden by pointer-events: auto on .gsa-event */
+    overflow: hidden; /* Ensure events don't bleed out of this container */
+}
+
+/* Day View specific event styling */
+.gsa-event { /* Used in Day View for absolute positioning */
+    position: absolute;
+    background-color: #4e73df;
+    color: white;
+    border-radius: 4px;
+    border: 1px solid rgba(0,0,0,0.2);
+    padding: 4px;
+    font-size: 0.75em; /* Slightly smaller to fit more content */
+    overflow: hidden;
+    white-space: nowrap; /* Keep text on one line */
+    box-sizing: border-box;
+    z-index: 10; /* To appear above grid cells */
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    pointer-events: auto; /* Events themselves are clickable */
+}
+/* Text within the event card */
+.gsa-event strong {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.gsa-event div {
+    font-size: 0.75em;
+    opacity: 0.9;
+}
+/* For overlapping events, adjust width */
+.gsa-event.overlapping { width: calc(var(--event-width) * 0.8); }
+
+/* Week View event styling */
+.gsa-event-list { /* List of events within a fitter cell */
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.gsa-event-list li {
+    margin-bottom: 0.5rem;
+    padding: 0.4rem;
+    background-color: #4e73df;
+    color: white;
+    border-radius: 4px;
+    border: 1px solid rgba(0,0,0,0.2);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+    cursor: pointer;
+    line-height: 1.3;
+    overflow: hidden; /* Ensure event text stays within the list item */
+}
+.gsa-event-list li:last-child {
+    margin-bottom: 0;
+}
+.gsa-event-list li strong {
+    display: block;
+    font-size: 0.9em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.gsa-event-list li span {
+    display: block;
+    font-size: 0.75em;
+    opacity: 0.9;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Drag and Drop Feedback */
+.ui-draggable-dragging {
+    z-index: 1000 !important; /* Ensure dragged item is on top */
+    opacity: 0.8;
+}
+.ui-droppable-hover {
+    background-color: #e6f7ff; /* Light blue highlight for droppable area */
+    border-color: #91d5ff;
+}
+
+/* Resizable handle styling */
+.ui-resizable-s { /* South handle */
+    height: 8px !important;
+    bottom: -4px !important;
+    cursor: ns-resize !important;
+}

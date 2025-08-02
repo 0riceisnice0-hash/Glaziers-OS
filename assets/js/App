@@ -1,0 +1,193 @@
+// assets/js/app.jsx
+import React, { useState, useEffect } from 'react';
+import { createRoot } from 'react-dom/client';
+import * as THREE from 'three';
+
+const PRODUCTS = [
+  { id: 'casement',   label: 'Liniar EnergyPlus Casement Window', img: '/assets/img/casement.jpg' },
+  { id: 'flush',      label: 'Liniar EnergyPlus Flush Sash Window', img: '/assets/img/flush.jpg' },
+  { id: 'tilt-turn',  label: 'Liniar EnergyPlus Tilt & Turn Window', img: '/assets/img/tilt-turn.jpg' },
+  // … add more …
+];
+
+function Wizard() {
+  const [step, setStep]       = useState(1);
+  const [product, setProduct] = useState(null);
+  const [w, setW]             = useState(0.9);
+  const [h, setH]             = useState(0.9);
+  const [price, setPrice]     = useState(0);
+
+  // fetch settings once
+  const [rates, setRates] = useState({ window: 0, door: 0 }); // Match API response keys
+  useEffect(() => {
+    fetch('/wp-json/glazieros/v1/settings/pricing') // Corrected endpoint
+      .then(r => r.json())
+      .then(j => setRates(j)) // API returns directly, not in .data
+      .catch(err => console.error("Failed to load pricing settings:", err));
+  }, []);
+
+  // calculate whenever w/h change
+  useEffect(() => {
+    if (!product) return;
+    const per = product.includes('door') 
+      ? rates.door 
+      : rates.window;
+    setPrice((w * h * per).toFixed(2));
+  }, [w, h, product, rates]);
+
+  // Three.js 3D Panel
+  useEffect(() => {
+    const container = document.getElementById('gos-3d');
+    if (!container || !product) return;
+
+    // Initialize Three.js only once
+    let scene, camera, renderer, mesh;
+    
+    // Check if renderer already exists (from previous render)
+    if (container.children.length > 0 && container.children[0] instanceof HTMLCanvasElement) {
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, canvas: container.children[0] });
+      scene = new THREE.Scene(); // Re-create scene for new product
+      camera = new THREE.PerspectiveCamera(75, container.clientWidth / 400, 0.1, 1000);
+    } else {
+      // Initial setup
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      container.innerHTML = ''; // Clear any previous content
+      container.appendChild(renderer.domElement);
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(75, container.clientWidth / 400, 0.1, 1000);
+    }
+
+    // Common setup
+    const camera   = new THREE.PerspectiveCamera(75, canvas.clientWidth / 400, 0.1, 1000);
+    camera.position.z = 2;
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(canvas.clientWidth, 400);
+    canvas.innerHTML = '';
+    canvas.appendChild(renderer.domElement);
+
+    const light = new THREE.DirectionalLight(0xffffff, 1);
+    light.position.set(5,5,5);
+    scene.add(light, new THREE.AmbientLight(0x404040));
+
+    const geom = new THREE.PlaneGeometry(w, h);
+    const mat  = new THREE.MeshStandardMaterial({ color: 0xffffff, transparent: true, opacity: 0.5 });
+    mesh = new THREE.Mesh(geom, mat); // Assign to outer scope mesh
+    scene.add(mesh);
+
+    let animationFrameId;
+    function animate() {
+      mesh.rotation.y += 0.005;
+      renderer.render(scene, camera);
+      animationFrameId = requestAnimationFrame(animate);
+    }
+    animate();
+
+    // Cleanup function for useEffect
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      if (renderer) {
+        renderer.dispose();
+        if (renderer.domElement.parentNode) {
+          renderer.domElement.parentNode.removeChild(renderer.domElement);
+        }
+      }
+      // Dispose of geometries and materials if they are not shared
+      geom.dispose();
+      mat.dispose();
+    };
+  }, [product, w, h]);
+
+  return (
+    <div className="flex h-full">
+      {/* 3D Preview */}
+      <div id="gos-3d" className="w-1/2 bg-gray-100"></div>
+
+      {/* Wizard Column */}
+      <div className="w-1/2 p-8 flex flex-col">
+        {/* Header */}
+        <div className="mb-8 flex items-center">
+          <img src="/assets/img/fenster-logo.svg" className="h-10 mr-4"/>
+          <h2 className="text-xl font-medium">
+            {step === 1 && 'Choose a product…'}
+            {step === 2 && 'Sizes'}
+            {step === 3 && 'Review & Save'}
+          </h2>
+        </div>
+
+        {/* Step 1: Product grid */}
+        {step === 1 && (
+          <div className="grid grid-cols-3 gap-6">
+            {PRODUCTS.map(p => (
+              <div key={p.id} className="text-center cursor-pointer"
+                   onClick={() => { setProduct(p.id); setStep(2); }}>
+                <img src={p.img} className="mx-auto mb-2 w-32 h-32 object-contain"/>
+                <p className="text-sm">{p.label}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Step 2: Width & Height */}
+        {step === 2 && (
+          <>
+            <div className="flex justify-between items-center mb-6">
+              <label className="text-sm">Width (mm)</label>
+              <input type="number" value={Math.round(w*1000)}
+                     onChange={e => setW(e.target.value/1000)}
+                     className="border p-2 w-24 text-right"/>
+            </div>
+            <div className="flex justify-between items-center mb-6">
+              <label className="text-sm">Height (mm)</label>
+              <input type="number" value={Math.round(h*1000)}
+                     onChange={e => setH(e.target.value/1000)}
+                     className="border p-2 w-24 text-right"/>
+            </div>
+          </>
+        )}
+
+        {/* Step 3: Review */}
+        {step === 3 && (
+          <div className="mb-6">
+            <p>Product: <strong>{product}</strong></p>
+            <p>Size: <strong>{(w*1000)} × {(h*1000)} mm</strong></p>
+            <p>Price: <strong>£{price}</strong></p>
+          </div>
+        )}
+
+        {/* Footer nav */}
+        <div className="mt-auto flex justify-between">
+          <button disabled={step===1}
+                  onClick={() => {
+                    setStep(step - 1);
+                    // If going back from step 3 (Review) to step 2 (Sizes),
+                    // we might need to clear savedJobId if it was only for temporary quote.
+                    // For now, we'll keep it simple and just go back.
+                  }}
+                  className="px-4 py-2 border rounded">Back</button>
+
+          {step < 3
+            ? <button onClick={() => setStep(step+1)}
+                      className="px-4 py-2 bg-green-600 text-white rounded">Next</button>
+            : <button onClick={() => {
+                // This is a simplified save. In a real app, you'd collect more data.
+                fetch('/wp-json/glazieros/v1/quote', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ type: product, width: w, height: h, price: price })
+                })
+                .then(r => r.json())
+                .then(j => alert(`Quote saved! Job ID: ${j.job_id}`))
+                .catch(err => alert('Failed to save quote: ' + err.message));
+              }}
+                      className="px-4 py-2 bg-blue-600 text-white rounded">Save Quote</button>
+          }
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Mount to your shortcode container
+const root = createRoot(document.getElementById('glazieros-pricing-tool'));
+root.render(<Wizard />);

@@ -1,0 +1,188 @@
+/* basic resets */
+#glazieros-pricing-tool,
+#gos-dashboard-app,
+#gos-quote-detail,
+#gsa-diary {
+  padding: 1em;
+  box-sizing: border-box;
+}
+
+/* Fullscreen mode for the standalone pricing tool page */
+body.gos-pricing-tool-active {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+body.gos-pricing-tool-active #glazieros-pricing-tool {
+  height: 100vh;
+  padding: 0;
+}
+
+/* alternating rows for any table */
+.gsa-table tr:nth-child(even) {
+  background: #fafafa;
+}
+
+/* Dashboard container */
+#gos-dashboard-app {
+  font-family: sans-serif;
+  background: #f7f8f9;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  height: 100%;
+  box-sizing: border-box;
+  position: relative;
+}
+
+/* Tabs */
+#gsa-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3rem;
+  background: #f7f8f9;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.gsa-tab {
+  padding: 0.5rem 1rem;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-bottom: none;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+.gsa-tab.active {
+  background: #fff;
+  font-weight: bold;
+  border-bottom: 1px solid #fff;
+}
+
+/* Panels */
+.gsa-panel {
+  display: none;
+  background: #fff;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  position: absolute;
+  top: 3rem;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: auto;
+}
+.gsa-panel.active {
+  display: block;
+}
+
+/* Fullscreen wrapper for dashboard */
+#gos-dashboard-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #fff;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+/* Hide everything except dashboard when fullscreen */
+body.gos-dashboard-fullscreen > *:not(#gos-dashboard-wrapper) {
+  display: none !important;
+}
+
+/* Utilities */
+.gos-center {
+  text-align: center;
+}
+.gos-button {
+  margin: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: #2eac66;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.gos-input {
+  width: 100%;
+  padding: 0.5rem;
+  margin: 0.25rem 0;
+  box-sizing: border-box;
+}
+.gos-form-field {
+  margin-bottom: 1rem;
+  text-align: left;
+}
+.gos-form-field-checkbox {
+  margin-top: 1rem;
+}
+.gos-form-field-checkbox label {
+  display: flex;
+  align-items: center;
+}
+.gos-form-field-checkbox input[type="checkbox"] {
+  width: auto;
+  margin-right: 0.5rem;
+}
+.gos-error {
+  color: red;
+  text-align: center;
+  padding: 2rem;
+}
+
+/* Wizard layout and 3D viewer */
+#glazieros-pricing-tool {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #f0f2f5;
+}
+.gos-wizard-step-container {
+  display: flex;
+  flex-grow: 1;
+  overflow: hidden;
+}
+.gos-controls-panel {
+  flex: 1;
+  min-width: 350px;
+  max-width: 500px;
+  padding: 2rem;
+  background-color: #fff;
+  overflow-y: auto;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+  z-index: 10;
+}
+.gos-viewer-panel {
+  flex: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+#gos-3d-placeholder {
+  width: 100%;
+  height: 100%;
+}
+/* Step 1 centering */
+.gos-step1-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Fullscreen mode for specific dashboard panels */
+.gsa-main-layout.gsa-fullscreen-panel .gsa-sidebar {
+  display: none;
+}
+.gsa-main-layout.gsa-fullscreen-panel .gsa-content {
+  left: 0;
+}

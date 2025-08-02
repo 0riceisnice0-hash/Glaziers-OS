@@ -1,0 +1,101 @@
+/* assets/css/diary/layout.css */
+
+/* Main container for the diary panel content */
+.gsa-diary-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* Controls above the scheduler */
+.gsa-diary-controls {
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 1rem;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Scheduler grid container */
+#gsa-scheduler-container {
+    flex-grow: 1;
+    position: relative; /* For absolute positioning of the event form */
+    overflow: auto; /* Allows the grid content to scroll */
+    border: 1px solid #ddd;
+}
+
+/* Diary Scheduling Form as a Sliding Sidebar */
+#gsa-newjob-form {
+    position: absolute;
+    top: 0;
+    right: -400px;
+    width: 400px;
+    height: 100%;
+    background: #fdfdfd;
+    border-left: 1px solid #ccc;
+    box-shadow: -2px 0 8px rgba(0,0,0,0.15);
+    padding: 1.5rem;
+    box-sizing: border-box;
+    overflow-y: auto;
+    transition: right 0.3s ease-in-out;
+    z-index: 1000;
+    display: flex; /* Use flexbox for vertical layout */
+    flex-direction: column;
+}
+
+#gsa-newjob-form.active {
+    right: 0;
+}
+
+#gsa-newjob-form h3 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    color: #333;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 1rem;
+}
+
+#gsa-newjob-form form {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Allow form to grow and push actions to bottom */
+}
+
+.form-field {
+    margin-bottom: 1rem;
+}
+
+.form-field label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-weight: bold;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.form-actions {
+    margin-top: auto; /* Pushes buttons to the bottom */
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: space-between; /* Align groups to ends */
+    align-items: center;
+}
+
+.form-actions .right-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Overlay for the sidebar form */
+#gsa-form-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+    z-index: 999; /* Below the form, above the scheduler */
+}
