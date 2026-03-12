@@ -133,8 +133,11 @@ console.log('👥 team.js loaded');
     }
 
     function renderFilters() {
-        const roles = ['all', 'fitter', 'surveyor', 'office', 'manager'];
-        const branches = ['all', 'main', 'north', 'south', 'east', 'west'];
+        const roles = ['all', 'fitter', 'surveyor', 'office', 'manager', 'apprentice'];
+        // Dynamically build branches from actual staff data
+        const branchSet = new Set();
+        TeamApp.staff.forEach(function(m) { if (m.branch) branchSet.add(m.branch); });
+        const branches = ['all'].concat(Array.from(branchSet));
         
         return `
             <div class="gst-filters">
@@ -162,7 +165,7 @@ console.log('👥 team.js loaded');
                 <select id="gst-branch-filter" class="gst-filter-select">
                     ${branches.map(branch => `
                         <option value="${branch}" ${TeamApp.filters.branch === branch ? 'selected' : ''}>
-                            ${branch === 'all' ? 'All Branches' : branch.charAt(0).toUpperCase() + branch.slice(1) + ' Branch'}
+                            ${branch === 'all' ? 'All Branches' : branch}
                         </option>
                     `).join('')}
                 </select>
@@ -217,9 +220,13 @@ console.log('👥 team.js loaded');
             fitter: '#667eea',
             surveyor: '#10b981',
             office: '#f59e0b',
-            manager: '#ef4444'
+            manager: '#ef4444',
+            apprentice: '#8b5cf6'
         };
         const roleColor = roleColors[member.role] || '#6b7280';
+        const ptoRemaining = member.pto_remaining || 0;
+        const ptoEarned = member.pto_earned || 25;
+        const ptoUsedPct = ptoEarned > 0 ? Math.round(((ptoEarned - ptoRemaining) / ptoEarned) * 100) : 0;
 
         return `
             <div class="gst-staff-card" data-staff-id="${member.id}">
@@ -227,7 +234,7 @@ console.log('👥 team.js loaded');
                     <div class="gst-avatar" style="background: linear-gradient(135deg, ${roleColor}, ${roleColor}dd);">
                         ${member.photo ? `<img src="${member.photo}" alt="${member.name}">` : initials}
                     </div>
-                    <div class="gst-status-badge gst-status-${member.status}">${member.status.replace('-', ' ')}</div>
+                    <div class="gst-status-badge gst-status-${member.status}">${(member.status || 'active').replace('-', ' ')}</div>
                 </div>
                 <div class="gst-card-body">
                     <h3 class="gst-staff-name">${member.name}</h3>
@@ -241,21 +248,24 @@ console.log('👥 team.js loaded');
                                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                                 <circle cx="12" cy="10" r="3"></circle>
                             </svg>
-                            ${member.branch || 'Main'} Branch
+                            ${member.branch || 'Main'}
                         </span>
-                        <span>
+                        <span title="PTO: ${ptoRemaining} of ${ptoEarned} days remaining">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                                 <line x1="16" y1="2" x2="16" y2="6"></line>
                                 <line x1="8" y1="2" x2="8" y2="6"></line>
                                 <line x1="3" y1="10" x2="21" y2="10"></line>
                             </svg>
-                            ${member.upcoming_events || 0} upcoming
+                            ${ptoRemaining}d leave left
                         </span>
+                    </div>
+                    <div class="gst-pto-bar" title="PTO used: ${ptoUsedPct}%">
+                        <div class="gst-pto-bar-fill" style="width: ${ptoUsedPct}%; background: ${ptoUsedPct > 80 ? '#ef4444' : ptoUsedPct > 50 ? '#f59e0b' : '#10b981'};"></div>
                     </div>
                 </div>
                 <div class="gst-card-footer">
-                    <button class="gst-btn-card" onclick="TeamApp.viewProfile(${member.id})">View Profile</button>
+                    <button class="gst-btn-card">View Profile</button>
                 </div>
             </div>
         `;
@@ -605,6 +615,10 @@ console.log('👥 team.js loaded');
     // ============================================================================
 
     function attachEventHandlers($panel) {
+        // Prevent duplicate event handlers
+        if ($panel.data('handlers-attached')) return;
+        $panel.data('handlers-attached', true);
+
         // Search filter
         $panel.on('input', '#gst-search-input', function() {
             TeamApp.filters.search = $(this).val();

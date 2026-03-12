@@ -236,6 +236,7 @@
                 $('.gos-new-invoice-btn').hide();
                 $('.gos-new-expense-btn').hide();
                 $('.gos-export-csv-btn').hide();
+                this.loadPayments();
             }
         },
         
@@ -324,10 +325,10 @@
                 <tr>
                     <td><strong>${this.escapeHtml(invoice.invoice_number)}</strong></td>
                     <td>${this.escapeHtml(invoice.customer_name)}</td>
-                    <td>${this.formatDate(invoice.invoice_date)}</td>
+                    <td>${this.formatDate(invoice.invoice_date || invoice.issued_date)}</td>
                     <td>${this.formatDate(invoice.due_date)}</td>
-                    <td><strong>£${this.formatCurrency(invoice.total_amount)}</strong></td>
-                    <td>£${this.formatCurrency(invoice.balance_due)}</td>
+                    <td><strong>£${this.formatCurrency(invoice.total_amount || invoice.amount)}</strong></td>
+                    <td>£${this.formatCurrency(invoice.balance_due != null ? invoice.balance_due : invoice.total_amount)}</td>
                     <td><span class="gos-finance-status ${invoice.status}">${this.escapeHtml(invoice.status)}</span></td>
                     <td>
                         <div class="gos-finance-actions">
@@ -459,8 +460,70 @@
         },
         
         /**
-         * Render Expenses Table
+         * Load Payments (derived from paid invoices)
          */
+        async loadPayments() {
+            try {
+                this.showLoading('.gos-payment-table-container');
+                
+                const response = await $.ajax({
+                    url: wpApiSettings.root + 'glazieros/v1/invoices',
+                    method: 'GET',
+                    beforeSend: (xhr) => {
+                        xhr.setRequestHeader('X-WP-Nonce', wpApiSettings.nonce);
+                    }
+                });
+                
+                const invoices = response || [];
+                const paidInvoices = invoices.filter(inv => inv.status === 'paid');
+                const $container = $('.gos-payment-table-container');
+                
+                if (paidInvoices.length === 0) {
+                    $container.html(`
+                        <div class="gos-finance-empty">
+                            <div class="gos-finance-empty-icon">💳</div>
+                            <h3>No Payments Yet</h3>
+                            <p>Payments will appear here when invoices are marked as paid</p>
+                        </div>
+                    `);
+                    return;
+                }
+                
+                const totalPaid = paidInvoices.reduce((s, inv) => s + (parseFloat(inv.total_amount) || parseFloat(inv.amount) || 0), 0);
+                
+                const rows = paidInvoices.map(inv => `
+                    <tr>
+                        <td><strong>${this.escapeHtml(inv.invoice_number || 'N/A')}</strong></td>
+                        <td>${this.escapeHtml(inv.customer_name || inv.client_name || '-')}</td>
+                        <td>${this.formatDate(inv.invoice_date || inv.issued_date)}</td>
+                        <td><strong>£${this.formatCurrency(inv.total_amount || inv.amount)}</strong></td>
+                        <td><span class="gos-finance-status paid">Paid</span></td>
+                    </tr>
+                `).join('');
+                
+                $container.html(`
+                    <div style="padding: 16px 20px; background: #f0fdf4; border-radius: 8px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: #166534; font-weight: 600;">Total Received</span>
+                        <span style="color: #166534; font-size: 1.25rem; font-weight: 700;">£${this.formatCurrency(totalPaid)}</span>
+                    </div>
+                    <table class="gos-finance-table">
+                        <thead>
+                            <tr>
+                                <th>Invoice #</th>
+                                <th>Customer</th>
+                                <th>Payment Date</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                `);
+            } catch (error) {
+                console.error('Failed to load payments:', error);
+                $('.gos-payment-table-container').html('<p style="padding:40px;text-align:center;color:#6b7280;">Failed to load payments</p>');
+            }
+        },
         renderExpenses() {
             const $container = $('.gos-expense-table-container');
             
@@ -874,35 +937,65 @@
                 const $form = $('#gos-invoice-form');
                 const formData = new FormData($form[0]);
                 
-                // Build invoice data
-                const invoiceData = {
-                    customer_name: formData.get('customer_name'),
-                    customer_email: formData.get('customer_email'),
-                    customer_phone: formData.get('customer_phone'),
-                    customer_address: formData.get('customer_address'),
-                    invoice_date: formData.get('invoice_date'),
-                    payment_terms: formData.get('payment_terms'),
-                    job_id: formData.get('job_id'),
-                    notes: formData.get('notes'),
-                    items: []
-                };
-                
-                // Build line items
+                // Build line items first so we can compute totals
                 const descriptions = formData.getAll('item_description[]');
                 const quantities = formData.getAll('item_quantity[]');
                 const unitPrices = formData.getAll('item_unit_price[]');
                 const vatRates = formData.getAll('item_vat_rate[]');
                 
+                const items = [];
+                let subtotal = 0;
+                let totalVat = 0;
+                
                 for (let i = 0; i < descriptions.length; i++) {
                     if (descriptions[i].trim()) {
-                        invoiceData.items.push({
+                        const qty = parseFloat(quantities[i]) || 1;
+                        const price = parseFloat(unitPrices[i]) || 0;
+                        const vat = parseFloat(vatRates[i]) || 20;
+                        const lineTotal = qty * price;
+                        const lineVat = lineTotal * (vat / 100);
+                        items.push({
                             description: descriptions[i],
-                            quantity: parseFloat(quantities[i]) || 1,
-                            unit_price: parseFloat(unitPrices[i]) || 0,
-                            vat_rate: parseFloat(vatRates[i]) || 20
+                            quantity: qty,
+                            unit_price: price,
+                            vat_rate: vat,
+                            total: lineTotal + lineVat
                         });
+                        subtotal += lineTotal;
+                        totalVat += lineVat;
                     }
                 }
+                
+                const totalAmount = subtotal + totalVat;
+                const invoiceDate = formData.get('invoice_date') || this.getTodayDate();
+                const paymentTerms = formData.get('payment_terms') || 'Net 30';
+                const termDays = paymentTerms === 'Due on Receipt' ? 0 : parseInt(paymentTerms.replace('Net ', '')) || 30;
+                const dueDate = new Date(new Date(invoiceDate).getTime() + termDays * 86400000).toISOString().slice(0, 10);
+                
+                // Generate invoice number
+                const allInv = this.invoices || [];
+                const invNum = 'INV-' + String(allInv.length + 1).padStart(4, '0');
+                
+                // Build invoice data
+                const invoiceData = {
+                    invoice_number: invNum,
+                    customer_name: formData.get('customer_name'),
+                    customer_email: formData.get('customer_email'),
+                    customer_phone: formData.get('customer_phone'),
+                    customer_address: formData.get('customer_address'),
+                    invoice_date: invoiceDate,
+                    issued_date: invoiceDate,
+                    due_date: dueDate,
+                    payment_terms: paymentTerms,
+                    job_id: formData.get('job_id'),
+                    notes: formData.get('notes'),
+                    items: items,
+                    amount: subtotal,
+                    total_amount: totalAmount,
+                    balance_due: totalAmount,
+                    vat_rate: 20,
+                    status: 'draft'
+                };
                 
                 const invoiceId = formData.get('id');
                 const isEdit = invoiceId && invoiceId !== '';

@@ -110,9 +110,33 @@ jQuery(function($) {
           ${bellIcon}
           <span class="gsa-notif-badge">3</span>
         </button>
-        <div class="gsa-topbar-user">
+        <div class="gsa-topbar-user" id="gsa-user-menu-trigger">
           <div class="gsa-topbar-avatar">AU</div>
           <span class="gsa-topbar-user-name">Admin</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:4px;opacity:0.5"><polyline points="6 9 12 15 18 9"/></svg>
+          <div class="gsa-user-dropdown" id="gsa-user-dropdown">
+            <div class="gsa-user-dropdown-header">
+              <div class="gsa-topbar-avatar" style="width:40px;height:40px;font-size:14px;">AU</div>
+              <div>
+                <div style="font-weight:600;color:#1e293b;">Admin User</div>
+                <div style="font-size:0.75rem;color:#64748b;">admin@glazieros.co.uk</div>
+              </div>
+            </div>
+            <div class="gsa-user-dropdown-divider"></div>
+            <a href="#" class="gsa-user-dropdown-item" data-action="profile">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              My Profile
+            </a>
+            <a href="#" class="gsa-user-dropdown-item" data-action="settings">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              Settings
+            </a>
+            <div class="gsa-user-dropdown-divider"></div>
+            <a href="#" class="gsa-user-dropdown-item gsa-user-dropdown-item--danger" data-action="logout">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              Log Out
+            </a>
+          </div>
         </div>
       </div>
     </header>
@@ -190,8 +214,8 @@ jQuery(function($) {
     .gsa-sidebar.collapsed .gsa-logo-text,
     .gsa-sidebar.collapsed .gsa-tab-label,
     .gsa-sidebar.collapsed .gsa-tab-badge,
-    .gsa-sidebar.collapsed .gsa-profile-info,
-    .gsa-sidebar.collapsed .gsa-collapse-btn { display: none; }
+    .gsa-sidebar.collapsed .gsa-profile-info { display: none; }
+    .gsa-sidebar.collapsed .gsa-collapse-btn { margin-left: 0; }
     .gsa-sidebar.collapsed .gsa-sidebar-header { justify-content: center; padding: 1.25rem 0.5rem; }
     .gsa-sidebar.collapsed .gsa-tab { justify-content: center; padding: 0.75rem; margin: 0.2rem 0.5rem; }
     .gsa-sidebar.collapsed .gsa-tab-icon { margin-right: 0; }
@@ -458,6 +482,27 @@ jQuery(function($) {
       display: flex; align-items: center; justify-content: center;
     }
     .gsa-topbar-user-name { font-size: 0.8125rem; font-weight: 600; color: #374151; }
+    .gsa-topbar-user { position: relative; }
+    .gsa-user-dropdown {
+      display: none; position: absolute; top: calc(100% + 8px); right: 0;
+      background: #fff; border: 1px solid #e5e7eb; border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.12); min-width: 220px; z-index: 2000;
+      padding: 0.5rem 0; animation: gsaFadeIn 0.15s ease-out;
+    }
+    .gsa-user-dropdown.active { display: block; }
+    .gsa-user-dropdown-header {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.75rem 1rem; border-bottom: 1px solid #f3f4f6; margin-bottom: 0.25rem;
+    }
+    .gsa-user-dropdown-divider { height: 1px; background: #f3f4f6; margin: 0.25rem 0; }
+    .gsa-user-dropdown-item {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.6rem 1rem; color: #374151; text-decoration: none;
+      font-size: 0.875rem; transition: all 0.15s ease; cursor: pointer;
+    }
+    .gsa-user-dropdown-item:hover { background: #f8f9fa; color: #667eea; }
+    .gsa-user-dropdown-item--danger { color: #ef4444; }
+    .gsa-user-dropdown-item--danger:hover { background: #fef2f2; color: #dc2626; }
 
     /* =============================================
        CONTENT AREA & PANELS
@@ -679,6 +724,33 @@ jQuery(function($) {
 
   // Breadcrumb home click
   $c.on('click', '.gsa-breadcrumb-home', function() { activate('dashboard'); });
+
+  // Admin user dropdown (top-right)
+  $c.on('click', '#gsa-user-menu-trigger', function(e) {
+    e.stopPropagation();
+    $('#gsa-user-dropdown').toggleClass('active');
+  });
+  $(document).on('click', function(e) {
+    if (!$(e.target).closest('#gsa-user-menu-trigger').length) {
+      $('#gsa-user-dropdown').removeClass('active');
+    }
+  });
+  $c.on('click', '.gsa-user-dropdown-item', function(e) {
+    e.preventDefault();
+    var action = $(this).data('action');
+    $('#gsa-user-dropdown').removeClass('active');
+    if (action === 'settings') activate('settings');
+    if (action === 'profile') activate('settings');
+    if (action === 'logout') {
+      if (confirm('Are you sure you want to log out?')) {
+        localStorage.removeItem('gos_seeded');
+        location.reload();
+      }
+    }
+  });
+
+  // Sidebar profile click
+  $c.on('click', '.gsa-sidebar-profile', function() { activate('settings'); });
 
   /* ============================================================
      GLOBAL SEARCH  (moved to top-bar input)

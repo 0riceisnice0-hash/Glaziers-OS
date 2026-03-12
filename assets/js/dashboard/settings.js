@@ -112,7 +112,7 @@ jQuery(function($) {
 
         // Build existing fields
         const fieldsHtml = settingsData.form_fields.map(fld => {
-            const isStd = !fld.id.startsWith('custom_');
+            const isStd = !fld.id || !fld.id.startsWith('custom_');
             const rmBtn = isStd
                 ? `<button class="gos-button-icon" disabled title="Standard fields cannot be removed">&times;</button>`
                 : `<button class="gos-button-icon remove-form-field">&times;</button>`;
