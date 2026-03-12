@@ -30,7 +30,7 @@
             this.$container = $container;
             this.step = 1;
             this.config = {
-                productType: 'Window',
+                productType: 'uPVC Windows',
                 material: 'uPVC',
                 width: 1.5,
                 height: 1.2,
@@ -118,6 +118,9 @@
             `;
             
             this.$container.html(html);
+            if (this.step === 1) {
+                setTimeout(() => this.renderProductThumbnails(), 50);
+            }
         }
 
         renderStep() {
@@ -134,16 +137,21 @@
         }
 
         renderStep1() {
+            const products = [
+                'Composite Doors', 'uPVC Windows', 'Sash Windows', 'Aluminium Windows',
+                'uPVC Doors', 'uPVC French Doors', 'uPVC Sliding Patio Doors', 'Aluminium Bifolding Doors',
+                'Aluminium Sliding Patio Doors', 'Heritage Aluminium Doors', 'Aluminium Doors',
+                'Slide & Fold Doors', 'Replacement Glazed Units'
+            ];
             return `
                 <div class="gos-wizard-step">
-                    <h3>Choose Your Product</h3>
+                    <h3>Choose your product to get a free, no-obligation quote</h3>
                     <div class="gos-product-grid">
-                        ${['Window', 'Door', 'Bifold Doors', 'Patio Doors', 'Conservatory'].map(type => `
+                        ${products.map(type => `
                             <div class="gos-product-card ${this.config.productType === type ? 'selected' : ''}" 
                                  data-product="${type}">
-                                <div class="gos-product-icon">${this.getProductIcon(type)}</div>
+                                <div class="gos-product-icon" data-product-thumb="${type}"></div>
                                 <div class="gos-product-name">${type}</div>
-                                <div class="gos-product-desc">${this.getProductDescription(type)}</div>
                             </div>
                         `).join('')}
                     </div>
@@ -310,25 +318,27 @@
         }
 
         getProductIcon(type) {
-            const icons = {
-                'Window': '🪟',
-                'Door': '🚪',
-                'Bifold Doors': '🚪🚪',
-                'Patio Doors': '🏠',
-                'Conservatory': '🏛️'
-            };
-            return icons[type] || '📦';
+            return '<span style="font-size:2rem;color:#4e73df;">' + (type.charAt(0) || '?') + '</span>';
         }
 
         getProductDescription(type) {
-            const descriptions = {
-                'Window': 'Perfect for any room',
-                'Door': 'Entrance & interior doors',
-                'Bifold Doors': 'Space-saving modern design',
-                'Patio Doors': 'Connect indoor & outdoor',
-                'Conservatory': 'Extend your living space'
-            };
-            return descriptions[type] || '';
+            return '';
+        }
+
+        renderProductThumbnails() {
+            if (!window.GOSBuilders || !window.GOSBuilders.renderThumbnail) return;
+            document.querySelectorAll('[data-product-thumb]').forEach(el => {
+                const name = el.getAttribute('data-product-thumb');
+                try {
+                    const canvas = window.GOSBuilders.renderThumbnail(name, 140);
+                    canvas.style.width = '100%';
+                    canvas.style.height = '100%';
+                    el.innerHTML = '';
+                    el.appendChild(canvas);
+                } catch (e) {
+                    el.textContent = name.charAt(0);
+                }
+            });
         }
 
         attachHandlers() {
@@ -402,6 +412,9 @@
             this.updateProgress();
             this.updateButtons();
             this.updatePrice();
+            if (this.step === 1) {
+                setTimeout(() => this.renderProductThumbnails(), 50);
+            }
         }
 
         updatePreview() {
@@ -589,17 +602,19 @@
                 
                 .gos-product-grid {
                     display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-                    gap: 1.5rem;
+                    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                    gap: 1.25rem;
+                    padding: 0.5rem;
                 }
                 
                 .gos-product-card {
-                    padding: 2rem 1.5rem;
+                    padding: 1rem 0.75rem;
                     border: 3px solid #e1e4e8;
                     border-radius: 12px;
                     text-align: center;
                     cursor: pointer;
                     transition: all 0.3s;
+                    background: #fff;
                 }
                 
                 .gos-product-card:hover {
@@ -614,8 +629,19 @@
                 }
                 
                 .gos-product-icon {
-                    font-size: 4rem;
-                    margin-bottom: 1rem;
+                    width: 120px;
+                    height: 120px;
+                    margin: 0 auto 0.5rem;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    overflow: hidden;
+                }
+                
+                .gos-product-icon canvas {
+                    display: block;
+                    max-width: 100%;
+                    max-height: 100%;
                 }
                 
                 .gos-product-name {

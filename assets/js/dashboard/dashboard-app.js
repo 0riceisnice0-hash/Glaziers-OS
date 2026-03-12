@@ -191,6 +191,7 @@ jQuery(function($) {
       z-index: 1000;
       overflow: hidden;
       transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: width;
     }
     .gsa-sidebar::before {
       content: '';
@@ -209,12 +210,24 @@ jQuery(function($) {
       pointer-events: none;
     }
 
+    /* Sidebar text elements fade smoothly */
+    .gsa-logo-text,
+    .gsa-tab-label,
+    .gsa-tab-badge,
+    .gsa-profile-info {
+      transition: opacity 0.2s ease, max-width 0.3s ease;
+      opacity: 1;
+      max-width: 200px;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
     /* Collapsed state */
     .gsa-sidebar.collapsed { width: 68px; }
     .gsa-sidebar.collapsed .gsa-logo-text,
     .gsa-sidebar.collapsed .gsa-tab-label,
     .gsa-sidebar.collapsed .gsa-tab-badge,
-    .gsa-sidebar.collapsed .gsa-profile-info { display: none; }
+    .gsa-sidebar.collapsed .gsa-profile-info { opacity: 0; max-width: 0; pointer-events: none; }
     .gsa-sidebar.collapsed .gsa-collapse-btn { margin-left: 0; }
     .gsa-sidebar.collapsed .gsa-sidebar-header { justify-content: center; padding: 1.25rem 0.5rem; }
     .gsa-sidebar.collapsed .gsa-tab { justify-content: center; padding: 0.75rem; margin: 0.2rem 0.5rem; }
@@ -229,6 +242,7 @@ jQuery(function($) {
       display: flex;
       flex-direction: column;
       transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: left;
     }
     .gsa-sidebar.collapsed ~ .gsa-content-wrapper { left: 68px; }
 
@@ -665,7 +679,7 @@ jQuery(function($) {
       .gsa-sidebar .gsa-logo-text,
       .gsa-sidebar .gsa-tab-label,
       .gsa-sidebar .gsa-tab-badge,
-      .gsa-sidebar .gsa-profile-info,
+      .gsa-sidebar .gsa-profile-info { opacity: 0; max-width: 0; pointer-events: none; }
       .gsa-sidebar .gsa-collapse-btn { display: none; }
       .gsa-sidebar .gsa-sidebar-header { justify-content: center; padding: 1.25rem 0.5rem; }
       .gsa-sidebar .gsa-tab { justify-content: center; padding: 0.75rem; margin: 0.2rem 0.5rem; }

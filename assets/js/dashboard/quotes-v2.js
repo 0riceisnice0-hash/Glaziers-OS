@@ -6683,7 +6683,7 @@
             this.quotesManager = quotesManager;
             this.step = 1;
             this.config = {
-                productType: 'Window',
+                productType: 'uPVC Windows',
                 material: 'uPVC',
                 width: 1.5,
                 height: 1.2,
@@ -6697,6 +6697,11 @@
                 address: ''
             };
             this.basePrice = 250; // £250 per sqm
+            this._3dScene = null;
+            this._3dCamera = null;
+            this._3dRenderer = null;
+            this._3dMesh = null;
+            this._3dAnimId = null;
         }
 
         open() {
@@ -6704,10 +6709,12 @@
             this.attachHandlers();
             setTimeout(() => {
                 $('#gos-pricing-wizard').addClass('show');
+                this.renderProductThumbnails();
             }, 10);
         }
 
         close() {
+            this.stop3D();
             $('#gos-pricing-wizard').removeClass('show');
             setTimeout(() => {
                 $('#gos-pricing-wizard').remove();
@@ -6806,16 +6813,20 @@
         }
 
         renderStep1_ProductSelection() {
+            const products = [
+                'Composite Doors', 'uPVC Windows', 'Sash Windows', 'Aluminium Windows',
+                'uPVC Doors', 'uPVC French Doors', 'uPVC Sliding Patio Doors', 'Aluminium Bifolding Doors',
+                'Aluminium Sliding Patio Doors', 'Heritage Aluminium Doors', 'Aluminium Doors',
+                'Slide & Fold Doors', 'Replacement Glazed Units'
+            ];
             return `
                 <div class="gos-wizard-step">
-                    <h3>Select Product Type</h3>
+                    <h3>Choose your product to get a free, no-obligation quote</h3>
                     <div class="gos-product-grid">
-                        ${['Window', 'Door', 'Bifold Doors', 'Patio Doors', 'Conservatory'].map(type => `
+                        ${products.map(type => `
                             <div class="gos-product-card ${this.config.productType === type ? 'selected' : ''}" 
                                  data-product="${type}">
-                                <div class="gos-product-icon">
-                                    ${this.getProductIcon(type)}
-                                </div>
+                                <div class="gos-product-icon" data-product-thumb="${type}"></div>
                                 <div class="gos-product-name">${type}</div>
                             </div>
                         `).join('')}
@@ -6966,55 +6977,106 @@
         }
 
         render3DPreview() {
-            // Simple SVG representation (placeholder for actual Three.js integration)
-            const width = this.config.width * 100;
-            const height = this.config.height * 100;
-            const viewBoxWidth = 400;
-            const viewBoxHeight = 400;
-            const centerX = viewBoxWidth / 2;
-            const centerY = viewBoxHeight / 2;
-            const rectWidth = Math.min(width, viewBoxWidth * 0.7);
-            const rectHeight = Math.min(height, viewBoxHeight * 0.7);
-            const x = centerX - rectWidth / 2;
-            const y = centerY - rectHeight / 2;
-            
-            return `
-                <svg viewBox="0 0 ${viewBoxWidth} ${viewBoxHeight}" class="gos-3d-svg">
-                    <!-- Shadow -->
-                    <rect x="${x + 10}" y="${y + 10}" width="${rectWidth}" height="${rectHeight}" 
-                          fill="rgba(0,0,0,0.1)" rx="4"/>
-                    <!-- Frame -->
-                    <rect x="${x}" y="${y}" width="${rectWidth}" height="${rectHeight}" 
-                          fill="${this.config.color}" stroke="#666" stroke-width="8" rx="4"/>
-                    <!-- Glass -->
-                    <rect x="${x + 15}" y="${y + 15}" width="${rectWidth - 30}" height="${rectHeight - 30}" 
-                          fill="rgba(135, 206, 250, 0.3)" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
-                    <!-- Cross bar (for windows) -->
-                    ${this.config.productType === 'Window' ? `
-                        <line x1="${centerX}" y1="${y + 15}" x2="${centerX}" y2="${y + rectHeight - 15}" 
-                              stroke="${this.config.color}" stroke-width="6"/>
-                        <line x1="${x + 15}" y1="${centerY}" x2="${x + rectWidth - 15}" y2="${centerY}" 
-                              stroke="${this.config.color}" stroke-width="6"/>
-                    ` : ''}
-                    <!-- Reflection -->
-                    <rect x="${x + 20}" y="${y + 20}" width="${rectWidth - 40}" height="${(rectHeight - 40) / 3}" 
-                          fill="rgba(255,255,255,0.2)"/>
-                </svg>
-                <div class="gos-3d-rotate-hint">
-                    ↻ 3D View - Drag to rotate (Three.js integration coming)
-                </div>
-            `;
+            // Placeholder container; actual Three.js canvas is injected by init3DPreview()
+            return `<div id="gos-3d-live-canvas" style="width:100%;height:100%;min-height:300px;"></div>`;
+        }
+
+        init3DPreview() {
+            const container = document.getElementById('gos-3d-live-canvas');
+            if (!container || !window.THREE || !window.GOSBuilders) return;
+            this.stop3D();
+
+            const w = container.clientWidth || 400;
+            const h = container.clientHeight || 400;
+
+            this._3dScene = new THREE.Scene();
+            this._3dCamera = new THREE.PerspectiveCamera(40, w / h, 0.1, 100);
+            this._3dRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            this._3dRenderer.setSize(w, h);
+            this._3dRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.innerHTML = '';
+            container.appendChild(this._3dRenderer.domElement);
+
+            // lighting
+            var dLight = new THREE.DirectionalLight(0xffffff, 0.9);
+            dLight.position.set(3, 4, 5);
+            this._3dScene.add(dLight);
+            this._3dScene.add(new THREE.AmbientLight(0xffffff, 0.5));
+
+            this.update3DModel();
+
+            const self = this;
+            (function loop() {
+                if (!self._3dRenderer) return;
+                if (self._3dMesh) self._3dMesh.rotation.y += 0.005;
+                self._3dRenderer.render(self._3dScene, self._3dCamera);
+                self._3dAnimId = requestAnimationFrame(loop);
+            })();
+        }
+
+        update3DModel() {
+            if (!this._3dScene) return;
+            if (this._3dMesh) this._3dScene.remove(this._3dMesh);
+
+            const builder = window.GOSBuilders.getBuilder(this.config.productType);
+            if (!builder) return;
+
+            const isDoor = this.config.productType.toLowerCase().indexOf('door') !== -1;
+            const colorHex = parseInt(this.config.color.replace('#', ''), 16);
+            const isAluminium = this.config.productType.indexOf('Aluminium') !== -1;
+
+            this._3dMesh = builder({
+                width: this.config.width,
+                height: this.config.height,
+                frameDepth: 0.07,
+                frameThk: 0.045,
+                frameColor: isAluminium ? 0x3a3a3a : (colorHex || 0xffffff),
+                glassColor: 0xADD8E6,
+                handleColor: 0x808080
+            });
+
+            this._3dScene.add(this._3dMesh);
+
+            // auto-fit camera
+            var box = new THREE.Box3().setFromObject(this._3dMesh);
+            var center = box.getCenter(new THREE.Vector3());
+            var bSize = box.getSize(new THREE.Vector3());
+            var maxDim = Math.max(bSize.x, bSize.y, bSize.z);
+            this._3dCamera.position.set(center.x, center.y, center.z + maxDim * 1.8);
+            this._3dCamera.lookAt(center);
+        }
+
+        stop3D() {
+            if (this._3dAnimId) cancelAnimationFrame(this._3dAnimId);
+            if (this._3dRenderer) {
+                this._3dRenderer.dispose();
+                this._3dRenderer = null;
+            }
+            this._3dScene = null;
+            this._3dMesh = null;
+            this._3dAnimId = null;
+        }
+
+        renderProductThumbnails() {
+            if (!window.GOSBuilders || !window.GOSBuilders.renderThumbnail) return;
+            document.querySelectorAll('[data-product-thumb]').forEach(el => {
+                const name = el.getAttribute('data-product-thumb');
+                try {
+                    const canvas = window.GOSBuilders.renderThumbnail(name, 140);
+                    canvas.style.width = '100%';
+                    canvas.style.height = '100%';
+                    el.innerHTML = '';
+                    el.appendChild(canvas);
+                } catch (e) {
+                    console.warn('Thumbnail failed for', name, e);
+                    el.textContent = name.charAt(0);
+                }
+            });
         }
 
         getProductIcon(type) {
-            const icons = {
-                'Window': '🪟',
-                'Door': '🚪',
-                'Bifold Doors': '🚪🚪',
-                'Patio Doors': '🚪⬅️➡️',
-                'Conservatory': '🏠'
-            };
-            return `<span class="gos-product-emoji">${icons[type] || '📦'}</span>`;
+            // Fallback only - thumbnails are rendered by renderProductThumbnails()
+            return '<span class="gos-product-emoji" style="font-size:2rem;color:#4e73df;">' + (type.charAt(0) || '?') + '</span>';
         }
 
         attachHandlers() {
@@ -7034,50 +7096,50 @@
                 this.updateStep();
             });
             
-            // Configuration inputs
+            // Configuration inputs - update 3D model without full re-render
             $(document).on('input', '#gos-width', (e) => {
                 this.config.width = parseFloat(e.target.value);
                 $('#gos-width-input').val(this.config.width);
-                this.updateStep();
+                this.updateConfigPreview();
             });
             
             $(document).on('input', '#gos-width-input', (e) => {
                 this.config.width = parseFloat(e.target.value);
                 $('#gos-width').val(this.config.width);
-                this.updateStep();
+                this.updateConfigPreview();
             });
             
             $(document).on('input', '#gos-height', (e) => {
                 this.config.height = parseFloat(e.target.value);
                 $('#gos-height-input').val(this.config.height);
-                this.updateStep();
+                this.updateConfigPreview();
             });
             
             $(document).on('input', '#gos-height-input', (e) => {
                 this.config.height = parseFloat(e.target.value);
                 $('#gos-height').val(this.config.height);
-                this.updateStep();
+                this.updateConfigPreview();
             });
             
             $(document).on('input change', '#gos-color', (e) => {
                 this.config.color = e.target.value;
-                this.updateStep();
+                this.updateConfigPreview();
             });
             
             $(document).on('click', '.gos-color-preset', (e) => {
                 this.config.color = $(e.currentTarget).data('color');
                 $('#gos-color').val(this.config.color);
-                this.updateStep();
+                this.updateConfigPreview();
             });
             
             $(document).on('change', '#gos-material', (e) => {
                 this.config.material = e.target.value;
-                this.updateStep();
+                this.updateConfigPreview();
             });
             
             $(document).on('change', '#gos-glazing', (e) => {
                 this.config.glazingType = e.target.value;
-                this.updateStep();
+                this.updateConfigPreview();
             });
             
             $(document).on('change', '#gos-frame-style', (e) => {
@@ -7129,6 +7191,30 @@
                 ${this.step < 3 ? '<button class="gos-button-primary" id="gos-wizard-next">Next Step</button>' : 
                   '<button class="gos-button-primary" id="gos-wizard-submit">Create Quote</button>'}
             `);
+
+            // Render Three.js product thumbnails for step 1
+            if (this.step === 1) {
+                this.stop3D();
+                setTimeout(() => this.renderProductThumbnails(), 50);
+            }
+            // Initialize 3D preview for step 2
+            if (this.step === 2) {
+                setTimeout(() => this.init3DPreview(), 50);
+            } else {
+                this.stop3D();
+            }
+        }
+
+        updateConfigPreview() {
+            // Update the 3D model and price without re-rendering the full step HTML
+            this.update3DModel();
+            $('.gos-wizard-price .gos-price-value').text('£' + this.calculatePrice());
+            // Update preview info text
+            $('.gos-preview-info').html(
+                '<strong>' + this.config.productType + '</strong> - ' +
+                this.config.width.toFixed(2) + 'm × ' + this.config.height.toFixed(2) + 'm (' +
+                (this.config.width * this.config.height).toFixed(2) + 'm²)'
+            );
         }
 
         async submitQuote() {
@@ -7324,17 +7410,19 @@
                 
                 .gos-product-grid {
                     display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-                    gap: 1rem;
+                    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                    gap: 1.25rem;
+                    padding: 0.5rem;
                 }
                 
                 .gos-product-card {
-                    padding: 1.5rem;
+                    padding: 1rem 0.75rem;
                     border: 2px solid #e1e4e8;
                     border-radius: 8px;
                     text-align: center;
                     cursor: pointer;
                     transition: all 0.2s;
+                    background: #fff;
                 }
                 
                 .gos-product-card:hover {
@@ -7349,12 +7437,24 @@
                 }
                 
                 .gos-product-icon {
-                    font-size: 3rem;
-                    margin-bottom: 0.5rem;
+                    width: 120px;
+                    height: 120px;
+                    margin: 0 auto 0.5rem;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    overflow: hidden;
+                }
+                
+                .gos-product-icon canvas {
+                    display: block;
+                    max-width: 100%;
+                    max-height: 100%;
                 }
                 
                 .gos-product-emoji {
-                    font-size: 3rem;
+                    font-size: 2rem;
+                    color: #4e73df;
                 }
                 
                 .gos-product-name {
@@ -7387,6 +7487,13 @@
                     align-items: center;
                     justify-content: center;
                     margin-bottom: 1rem;
+                    overflow: hidden;
+                }
+                
+                .gos-3d-canvas canvas {
+                    display: block;
+                    max-width: 100%;
+                    max-height: 100%;
                 }
                 
                 .gos-3d-svg {
