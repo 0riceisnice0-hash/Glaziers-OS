@@ -47,13 +47,18 @@
     return Math.max(...records.map(function (r) { return Number(r.id) || 0; })) + 1;
   }
 
-  function mockResponse(data, status) {
+  function mockResponse(data, status, extraHeaders) {
     status = status || 200;
+    var headerMap = Object.assign({
+      'Content-Type':   'application/json',
+      'X-WP-TotalPages': '1',
+      'X-WP-Total':     Array.isArray(data) ? String(data.length) : '1',
+    }, extraHeaders || {});
     return {
       ok:     status >= 200 && status < 300,
       status: status,
       headers: {
-        get: function () { return 'application/json'; },
+        get: function (name) { return headerMap[name] || null; },
       },
       json: function () { return Promise.resolve(data); },
       text: function () { return Promise.resolve(JSON.stringify(data)); },
@@ -140,65 +145,85 @@
     ]);
 
     // Jobs (with embedded client data)
+    // Field aliases: type=job_type, first_name/last_name split from client_name,
+    //                email=client_email, phone=client_phone, date=created_at
     write('jobs', [
       {
         id: 1, post_status: 'publish',
-        client_name: 'John Smith',     client_email: 'john.smith@example.co.uk',     client_phone: '07900 100001',
+        first_name: 'John', last_name: 'Smith',
+        client_name: 'John Smith', email: 'john.smith@example.co.uk', client_email: 'john.smith@example.co.uk',
+        phone: '07900 100001', client_phone: '07900 100001',
         address: '12 Oak Street, London, E1 4AB',
-        job_type: 'window', width: 1.2, height: 1.5, price: 540,
+        type: 'window', job_type: 'window', width: 1.2, height: 1.5, price: 540,
         lead_status: 'Won', install_status: 'Completed',
         branch_id: 1, fitter_id: 1,
         notes: 'Double-glazed uPVC window, white frame.',
+        date: '2024-11-01T09:00:00.000Z',
         created_at: '2024-11-01T09:00:00.000Z', updated_at: '2024-11-15T14:00:00.000Z',
       },
       {
         id: 2, post_status: 'publish',
-        client_name: 'Sarah Johnson',  client_email: 'sarah.johnson@example.co.uk',  client_phone: '07900 100002',
+        first_name: 'Sarah', last_name: 'Johnson',
+        client_name: 'Sarah Johnson', email: 'sarah.johnson@example.co.uk', client_email: 'sarah.johnson@example.co.uk',
+        phone: '07900 100002', client_phone: '07900 100002',
         address: '45 Elm Avenue, Manchester, M14 5AB',
-        job_type: 'door', width: 0.9, height: 2.1, price: 630,
+        type: 'door', job_type: 'door', width: 0.9, height: 2.1, price: 630,
         lead_status: 'Quoted', install_status: 'Pending',
         branch_id: 2, fitter_id: null,
         notes: 'Composite front door, anthracite grey.',
+        date: '2024-11-05T10:30:00.000Z',
         created_at: '2024-11-05T10:30:00.000Z', updated_at: '2024-11-05T10:30:00.000Z',
       },
       {
         id: 3, post_status: 'publish',
-        client_name: 'Robert Williams', client_email: 'robert.williams@example.co.uk', client_phone: '07900 100003',
+        first_name: 'Robert', last_name: 'Williams',
+        client_name: 'Robert Williams', email: 'robert.williams@example.co.uk', client_email: 'robert.williams@example.co.uk',
+        phone: '07900 100003', client_phone: '07900 100003',
         address: '8 Birch Lane, Birmingham, B12 9QP',
-        job_type: 'window', width: 2.4, height: 1.2, price: 864,
+        type: 'window', job_type: 'window', width: 2.4, height: 1.2, price: 864,
         lead_status: 'New', install_status: 'Pending',
         branch_id: 3, fitter_id: null,
         notes: 'Bay window, triple glazed.',
+        date: '2024-11-10T08:00:00.000Z',
         created_at: '2024-11-10T08:00:00.000Z', updated_at: '2024-11-10T08:00:00.000Z',
       },
       {
         id: 4, post_status: 'publish',
-        client_name: 'Emily Brown',    client_email: 'emily.brown@example.co.uk',    client_phone: '07900 100004',
+        first_name: 'Emily', last_name: 'Brown',
+        client_name: 'Emily Brown', email: 'emily.brown@example.co.uk', client_email: 'emily.brown@example.co.uk',
+        phone: '07900 100004', client_phone: '07900 100004',
         address: '23 Cedar Road, Leeds, LS6 2DT',
-        job_type: 'door', width: 1.0, height: 2.2, price: 704,
+        type: 'door', job_type: 'door', width: 1.0, height: 2.2, price: 704,
         lead_status: 'Follow-up', install_status: 'Scheduled',
         branch_id: 2, fitter_id: 3,
         notes: 'Bi-fold door, aluminium, cream.',
+        date: '2024-11-12T11:00:00.000Z',
         created_at: '2024-11-12T11:00:00.000Z', updated_at: '2024-11-18T09:00:00.000Z',
       },
       {
         id: 5, post_status: 'publish',
-        client_name: 'David Taylor',   client_email: 'david.taylor@example.co.uk',   client_phone: '07900 100005',
+        first_name: 'David', last_name: 'Taylor',
+        client_name: 'David Taylor', email: 'david.taylor@example.co.uk', client_email: 'david.taylor@example.co.uk',
+        phone: '07900 100005', client_phone: '07900 100005',
         address: '67 Maple Drive, Bristol, BS1 4QT',
-        job_type: 'window', width: 1.8, height: 1.5, price: 810,
+        type: 'window', job_type: 'window', width: 1.8, height: 1.5, price: 810,
         lead_status: 'Won', install_status: 'In Progress',
         branch_id: 1, fitter_id: 2,
         notes: 'Sash window replacement, painted finish.',
+        date: '2024-11-14T13:00:00.000Z',
         created_at: '2024-11-14T13:00:00.000Z', updated_at: '2024-11-20T10:00:00.000Z',
       },
       {
         id: 6, post_status: 'publish',
-        client_name: 'Linda Anderson', client_email: 'linda.anderson@example.co.uk', client_phone: '07900 100006',
+        first_name: 'Linda', last_name: 'Anderson',
+        client_name: 'Linda Anderson', email: 'linda.anderson@example.co.uk', client_email: 'linda.anderson@example.co.uk',
+        phone: '07900 100006', client_phone: '07900 100006',
         address: '3 Pine Close, Sheffield, S1 2BQ',
-        job_type: 'window', width: 1.0, height: 1.0, price: 300,
+        type: 'window', job_type: 'window', width: 1.0, height: 1.0, price: 300,
         lead_status: 'Lost', install_status: 'Pending',
         branch_id: 3, fitter_id: null,
         notes: 'Small bedroom window, standard clear glass.',
+        date: '2024-11-16T15:00:00.000Z',
         created_at: '2024-11-16T15:00:00.000Z', updated_at: '2024-11-17T08:00:00.000Z',
       },
     ]);
@@ -226,17 +251,18 @@
       },
     ]);
 
-    // Audit logs
+    // Audit logs — field names match audit-logs.js render expectations:
+    // action, user, object_id, object_type, ip_address, date
     var auditBase = '2024-11-';
     write('audit_logs', [
-      { id: 1, action: 'quote_created',     entity: 'job', entity_id: 1, description: 'Quote created for John Smith',          user: 'admin', created_at: auditBase + '01T09:05:00.000Z', updated_at: auditBase + '01T09:05:00.000Z' },
-      { id: 2, action: 'status_updated',    entity: 'job', entity_id: 1, description: 'Lead status changed to Won',             user: 'admin', created_at: auditBase + '10T11:00:00.000Z', updated_at: auditBase + '10T11:00:00.000Z' },
-      { id: 3, action: 'invoice_generated', entity: 'job', entity_id: 1, description: 'Invoice INV-0001 generated',             user: 'admin', created_at: auditBase + '15T14:05:00.000Z', updated_at: auditBase + '15T14:05:00.000Z' },
-      { id: 4, action: 'quote_created',     entity: 'job', entity_id: 2, description: 'Quote created for Sarah Johnson',        user: 'admin', created_at: auditBase + '05T10:35:00.000Z', updated_at: auditBase + '05T10:35:00.000Z' },
-      { id: 5, action: 'quote_created',     entity: 'job', entity_id: 3, description: 'Quote created for Robert Williams',      user: 'admin', created_at: auditBase + '10T08:10:00.000Z', updated_at: auditBase + '10T08:10:00.000Z' },
-      { id: 6, action: 'status_updated',    entity: 'job', entity_id: 4, description: 'Install status changed to Scheduled',   user: 'admin', created_at: auditBase + '18T09:05:00.000Z', updated_at: auditBase + '18T09:05:00.000Z' },
-      { id: 7, action: 'status_updated',    entity: 'job', entity_id: 5, description: 'Install status changed to In Progress', user: 'admin', created_at: auditBase + '20T10:05:00.000Z', updated_at: auditBase + '20T10:05:00.000Z' },
-      { id: 8, action: 'invoice_generated', entity: 'job', entity_id: 5, description: 'Invoice INV-0002 generated',             user: 'admin', created_at: auditBase + '20T10:10:00.000Z', updated_at: auditBase + '20T10:10:00.000Z' },
+      { id: 1, action: 'quote_created',     user: 'admin', object_id: 1, object_type: 'job', ip_address: '192.168.1.1', date: auditBase + '01T09:05:00.000Z', created_at: auditBase + '01T09:05:00.000Z', updated_at: auditBase + '01T09:05:00.000Z' },
+      { id: 2, action: 'status_updated',    user: 'admin', object_id: 1, object_type: 'job', ip_address: '192.168.1.1', date: auditBase + '10T11:00:00.000Z', created_at: auditBase + '10T11:00:00.000Z', updated_at: auditBase + '10T11:00:00.000Z' },
+      { id: 3, action: 'invoice_generated', user: 'admin', object_id: 1, object_type: 'job', ip_address: '192.168.1.1', date: auditBase + '15T14:05:00.000Z', created_at: auditBase + '15T14:05:00.000Z', updated_at: auditBase + '15T14:05:00.000Z' },
+      { id: 4, action: 'quote_created',     user: 'admin', object_id: 2, object_type: 'job', ip_address: '192.168.1.2', date: auditBase + '05T10:35:00.000Z', created_at: auditBase + '05T10:35:00.000Z', updated_at: auditBase + '05T10:35:00.000Z' },
+      { id: 5, action: 'quote_created',     user: 'admin', object_id: 3, object_type: 'job', ip_address: '192.168.1.2', date: auditBase + '10T08:10:00.000Z', created_at: auditBase + '10T08:10:00.000Z', updated_at: auditBase + '10T08:10:00.000Z' },
+      { id: 6, action: 'status_updated',    user: 'admin', object_id: 4, object_type: 'job', ip_address: '192.168.1.3', date: auditBase + '18T09:05:00.000Z', created_at: auditBase + '18T09:05:00.000Z', updated_at: auditBase + '18T09:05:00.000Z' },
+      { id: 7, action: 'status_updated',    user: 'admin', object_id: 5, object_type: 'job', ip_address: '192.168.1.3', date: auditBase + '20T10:05:00.000Z', created_at: auditBase + '20T10:05:00.000Z', updated_at: auditBase + '20T10:05:00.000Z' },
+      { id: 8, action: 'invoice_generated', user: 'admin', object_id: 5, object_type: 'job', ip_address: '192.168.1.4', date: auditBase + '20T10:10:00.000Z', created_at: auditBase + '20T10:10:00.000Z', updated_at: auditBase + '20T10:10:00.000Z' },
     ]);
 
     // Invoices
@@ -325,7 +351,21 @@
   // ---------------------------------------------------------------------------
   // WordPress API compatibility shim
   // ---------------------------------------------------------------------------
-  window.wpApiSettings = { root: '', nonce: 'static-demo', siteurl: '' };
+  window.wpApiSettings = { root: '/wp-json/', nonce: 'static-demo', siteurl: '' };
+
+  // ---------------------------------------------------------------------------
+  // jQuery utilities that WordPress / plugins used to provide
+  // ---------------------------------------------------------------------------
+  if (window.jQuery && !window.jQuery.debounce) {
+    window.jQuery.debounce = function (delay, fn) {
+      var timer;
+      return function () {
+        var args = arguments, ctx = this;
+        clearTimeout(timer);
+        timer = setTimeout(function () { fn.apply(ctx, args); }, delay);
+      };
+    };
+  }
 
   // ---------------------------------------------------------------------------
   // fetch override – routes /wp-json/ calls to DataStore
@@ -367,6 +407,11 @@
     if (p === '/glazieros/v1/jobs' && method === 'POST') {
       return Promise.resolve(mockResponse(ds.create('jobs', body)));
     }
+    // Quote creation alias (quotes-v2.js POSTs to /quote singular)
+    if (p === '/glazieros/v1/quote' && method === 'POST') {
+      var newJob = ds.create('jobs', Object.assign({ post_status: 'publish', install_status: 'Pending' }, body));
+      return Promise.resolve(mockResponse(newJob));
+    }
     var jobIdMatch = p.match(/^\/glazieros\/v1\/jobs\/(\d+)$/);
     if (jobIdMatch) {
       var jid = jobIdMatch[1];
@@ -379,6 +424,10 @@
     if (jobStatusMatch && method === 'POST') {
       var jsid = jobStatusMatch[1];
       var statusUpdate = {};
+      // quotes-v2.js sends { status, type } where type is 'lead' or 'install'
+      if (body.type === 'lead')    statusUpdate.lead_status    = body.status;
+      if (body.type === 'install') statusUpdate.install_status = body.status;
+      // also accept direct field names as fallback
       if (body.lead_status)    statusUpdate.lead_status    = body.lead_status;
       if (body.install_status) statusUpdate.install_status = body.install_status;
       return Promise.resolve(mockResponse(ds.update('jobs', jsid, statusUpdate)));
@@ -595,26 +644,27 @@
       if (method === 'DELETE') return Promise.resolve(mockResponse({ deleted: ds.delete('diary_events', did) }));
     }
 
-    // Search
+    // Search — handle both ?term= (dashboard-app.js) and ?q= query params
     if (p === '/glazieros/v1/search' && method === 'GET') {
-      var q      = (urlStr.match(/[?&]q=([^&]*)/) || [])[1] || '';
-      var qLower = decodeURIComponent(q).toLowerCase();
+      var rawQ = (urlStr.match(/[?&]term=([^&]*)/) || [])[1] ||
+                 (urlStr.match(/[?&]q=([^&]*)/)    || [])[1] || '';
+      var qLower = decodeURIComponent(rawQ).toLowerCase();
       var results = [];
       if (qLower) {
         ds.getAll('jobs').forEach(function (j) {
           if ((j.client_name || '').toLowerCase().indexOf(qLower) !== -1 ||
               (j.address    || '').toLowerCase().indexOf(qLower) !== -1) {
-            results.push({ type: 'job', item: j });
+            results.push({ id: j.id, type: 'Job', title: j.client_name + ' – ' + (j.address || '') });
           }
         });
         ds.getAll('fitters').forEach(function (f) {
           if ((f.name || '').toLowerCase().indexOf(qLower) !== -1) {
-            results.push({ type: 'fitter', item: f });
+            results.push({ id: f.id, type: 'Fitter', title: f.name });
           }
         });
         ds.getAll('branches').forEach(function (b) {
           if ((b.name || '').toLowerCase().indexOf(qLower) !== -1) {
-            results.push({ type: 'branch', item: b });
+            results.push({ id: b.id, type: 'Branch', title: b.name });
           }
         });
       }
@@ -624,5 +674,42 @@
     // Fallback – unknown /wp-json/ endpoint
     return Promise.resolve(mockResponse({ success: true, data: [] }));
   };
+
+  // ---------------------------------------------------------------------------
+  // jQuery $.ajax interceptor — routes $.ajax(/wp-json/...) through our fetch
+  // override, enabling finance.js (which uses $.ajax) to work without a server.
+  // ---------------------------------------------------------------------------
+  if (window.jQuery) {
+    window.jQuery.ajaxTransport('+*', function (options) {
+      var urlStr = options.url || '';
+      if (urlStr.indexOf('/wp-json/') === -1) return; // not our business
+
+      return {
+        send: function (headers, completeCallback) {
+          var fetchOptions = {
+            method: (options.type || 'GET').toUpperCase(),
+          };
+          if (fetchOptions.method !== 'GET' && fetchOptions.method !== 'HEAD') {
+            var body = options.data;
+            if (body && typeof body === 'object' && !(body instanceof FormData)) {
+              body = JSON.stringify(body);
+            }
+            fetchOptions.body = body || undefined;
+          }
+
+          // Call our (already-overridden) window.fetch
+          window.fetch(urlStr, fetchOptions).then(function (resp) {
+            return resp.json().then(function (data) {
+              // jQuery transport completeCallback(status, statusText, {text:...}, headers)
+              completeCallback(resp.status, 'OK', { json: data, text: JSON.stringify(data) }, '');
+            });
+          }).catch(function (err) {
+            completeCallback(500, 'Error', { text: err.message }, '');
+          });
+        },
+        abort: function () {},
+      };
+    });
+  }
 
 }(window));
