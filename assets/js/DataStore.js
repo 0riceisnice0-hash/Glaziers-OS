@@ -670,6 +670,84 @@
       if (method === 'DELETE') return Promise.resolve(mockResponse({ deleted: ds.delete('diary_events', did) }));
     }
 
+    // Customers – virtual endpoint; extracts unique customers from jobs
+    if (p === '/glazieros/v1/customers' && method === 'GET') {
+      var allJobs = ds.getAll('jobs');
+      var custMap = {};
+      allJobs.forEach(function (j) {
+        var key = (j.email || j.client_email || j.client_name || '').toLowerCase().trim();
+        if (!key) return;
+        if (!custMap[key]) {
+          custMap[key] = {
+            id: key,
+            first_name: j.first_name || '',
+            last_name: j.last_name || '',
+            client_name: j.client_name || ((j.first_name || '') + ' ' + (j.last_name || '')).trim(),
+            email: j.email || j.client_email || '',
+            phone: j.phone || j.client_phone || '',
+            address: j.address || '',
+            postcode: j.postcode || '',
+            jobs: [],
+            total_spend: 0,
+            last_activity: j.updated_at || j.created_at || '',
+          };
+        }
+        custMap[key].jobs.push(j);
+        custMap[key].total_spend += Number(j.price) || 0;
+        var jDate = j.updated_at || j.created_at || '';
+        if (jDate > custMap[key].last_activity) custMap[key].last_activity = jDate;
+      });
+      return Promise.resolve(mockResponse(Object.values(custMap)));
+    }
+    var custIdMatch = p.match(/^\/glazieros\/v1\/customers\/([^/]+)$/);
+    if (custIdMatch && method === 'GET') {
+      var cKey = decodeURIComponent(custIdMatch[1]).toLowerCase().trim();
+      var cJobs = ds.getAll('jobs').filter(function (j) {
+        return ((j.email || j.client_email || j.client_name || '').toLowerCase().trim()) === cKey;
+      });
+      if (cJobs.length) {
+        var cFirst = cJobs[0];
+        var cSpend = cJobs.reduce(function (s, j) { return s + (Number(j.price) || 0); }, 0);
+        var cLast = cJobs.reduce(function (d, j) { var t = j.updated_at || j.created_at || ''; return t > d ? t : d; }, '');
+        return Promise.resolve(mockResponse({
+          id: cKey,
+          first_name: cFirst.first_name || '',
+          last_name: cFirst.last_name || '',
+          client_name: cFirst.client_name || '',
+          email: cFirst.email || cFirst.client_email || '',
+          phone: cFirst.phone || cFirst.client_phone || '',
+          address: cFirst.address || '',
+          postcode: cFirst.postcode || '',
+          jobs: cJobs,
+          total_spend: cSpend,
+          last_activity: cLast,
+        }));
+      }
+      return Promise.resolve(mockResponse(null, 404));
+    }
+    if (p === '/glazieros/v1/customers' && method === 'POST') {
+      var custJob = ds.create('jobs', Object.assign({
+        post_status: 'draft',
+        lead_status: 'New',
+        install_status: 'Pending',
+        type: 'window',
+        job_type: 'window',
+        price: 0,
+      }, {
+        first_name: body.first_name || '',
+        last_name: body.last_name || '',
+        client_name: ((body.first_name || '') + ' ' + (body.last_name || '')).trim() || body.client_name || '',
+        email: body.email || '',
+        client_email: body.email || '',
+        phone: body.phone || '',
+        client_phone: body.phone || '',
+        address: body.address || '',
+        postcode: body.postcode || '',
+        date: new Date().toISOString(),
+      }));
+      return Promise.resolve(mockResponse(custJob));
+    }
+
     // Search — handle both ?term= (dashboard-app.js) and ?q= query params
     if (p === '/glazieros/v1/search' && method === 'GET') {
       var rawQ = (urlStr.match(/[?&]term=([^&]*)/) || [])[1] ||
