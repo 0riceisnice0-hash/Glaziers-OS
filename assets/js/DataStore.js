@@ -419,11 +419,16 @@
       return Promise.resolve(mockResponse(ds.getAll('jobs')));
     }
     if (p === '/glazieros/v1/jobs' && method === 'POST') {
-      return Promise.resolve(mockResponse(ds.create('jobs', body)));
+      var newJobDirect = ds.create('jobs', body);
+      // Auto-add audit log entry
+      ds.create('audit_logs', { action: 'quote_created', user: 'admin', object_id: newJobDirect.id, object_type: 'job', ip_address: '127.0.0.1', date: now() });
+      return Promise.resolve(mockResponse(newJobDirect));
     }
     // Quote creation alias (quotes-v2.js POSTs to /quote singular)
     if (p === '/glazieros/v1/quote' && method === 'POST') {
       var newJob = ds.create('jobs', Object.assign({ post_status: 'publish', install_status: 'Pending' }, body));
+      // Auto-add audit log entry
+      ds.create('audit_logs', { action: 'quote_created', user: 'admin', object_id: newJob.id, object_type: 'job', ip_address: '127.0.0.1', date: now() });
       return Promise.resolve(mockResponse(newJob));
     }
     // Bulk delete jobs
@@ -610,7 +615,9 @@
       return Promise.resolve(mockResponse(ds.getAll('invoices')));
     }
     if (p === '/glazieros/v1/invoices' && method === 'POST') {
-      return Promise.resolve(mockResponse(ds.create('invoices', body)));
+      var newInv = ds.create('invoices', body);
+      ds.create('audit_logs', { action: 'invoice_created', user: 'admin', object_id: newInv.id, object_type: 'invoice', ip_address: '127.0.0.1', date: now() });
+      return Promise.resolve(mockResponse(newInv));
     }
     var invoiceIdMatch = p.match(/^\/glazieros\/v1\/invoices\/(\d+)$/);
     if (invoiceIdMatch) {
