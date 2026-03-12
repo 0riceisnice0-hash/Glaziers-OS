@@ -29,6 +29,7 @@
         constructor($container) {
             this.$container = $container;
             this.step = 1;
+            this.enabledProducts = null;
             this.config = {
                 productType: 'uPVC Windows',
                 material: 'uPVC',
@@ -47,9 +48,20 @@
         }
 
         init() {
-            this.render();
-            this.attachHandlers();
-            this.injectStyles();
+            const self = this;
+            const loadProducts = (window.GOSProductCatalog && window.GOSProductCatalog.fetchEnabled)
+                ? window.GOSProductCatalog.fetchEnabled()
+                : Promise.resolve(null);
+
+            loadProducts.then(function(enabled) {
+                self.enabledProducts = enabled;
+                if (enabled && enabled.length > 0 && enabled.indexOf(self.config.productType) === -1) {
+                    self.config.productType = enabled[0];
+                }
+                self.render();
+                self.attachHandlers();
+                self.injectStyles();
+            });
         }
 
         calculatePrice() {
@@ -137,24 +149,40 @@
         }
 
         renderStep1() {
-            const products = [
-                'Composite Doors', 'uPVC Windows', 'Sash Windows', 'Aluminium Windows',
-                'uPVC Doors', 'uPVC French Doors', 'uPVC Sliding Patio Doors', 'Aluminium Bifolding Doors',
-                'Aluminium Sliding Patio Doors', 'Heritage Aluminium Doors', 'Aluminium Doors',
-                'Slide & Fold Doors', 'Replacement Glazed Units'
-            ];
+            const GROUPS = (window.GOSProductCatalog && window.GOSProductCatalog.GROUPS) || {
+                'Windows': ['uPVC Windows', 'Sash Windows', 'Aluminium Windows'],
+                'Doors': ['Composite Doors', 'uPVC Doors', 'Aluminium Doors', 'Heritage Aluminium Doors'],
+                'French & Patio Doors': ['uPVC French Doors', 'uPVC Sliding Patio Doors', 'Aluminium Sliding Patio Doors'],
+                'Bifolding & Folding Doors': ['Aluminium Bifolding Doors', 'Slide & Fold Doors'],
+                'Glazing': ['Replacement Glazed Units']
+            };
+            const enabledSet = this.enabledProducts ? new Set(this.enabledProducts) : null;
+
+            let groupsHtml = '';
+            Object.entries(GROUPS).forEach(([groupName, products]) => {
+                const visible = enabledSet ? products.filter(p => enabledSet.has(p)) : products;
+                if (visible.length === 0) return;
+
+                const cardsHtml = visible.map(type => `
+                    <div class="gos-product-card ${this.config.productType === type ? 'selected' : ''}" 
+                         data-product="${type}">
+                        <div class="gos-product-icon" data-product-thumb="${type}"></div>
+                        <div class="gos-product-name">${type}</div>
+                    </div>
+                `).join('');
+
+                groupsHtml += `
+                    <div class="gos-product-group">
+                        <h4 class="gos-product-group-title">${groupName}</h4>
+                        <div class="gos-product-grid">${cardsHtml}</div>
+                    </div>
+                `;
+            });
+
             return `
                 <div class="gos-wizard-step">
-                    <h3>Choose your product to get a free, no-obligation quote</h3>
-                    <div class="gos-product-grid">
-                        ${products.map(type => `
-                            <div class="gos-product-card ${this.config.productType === type ? 'selected' : ''}" 
-                                 data-product="${type}">
-                                <div class="gos-product-icon" data-product-thumb="${type}"></div>
-                                <div class="gos-product-name">${type}</div>
-                            </div>
-                        `).join('')}
-                    </div>
+                    <h3 class="gos-wizard-step-title">Choose your product to get a free, no-obligation quote</h3>
+                    ${groupsHtml}
                 </div>
             `;
         }
@@ -600,42 +628,65 @@
                     font-size: 1.5rem;
                 }
                 
+                .gos-product-group {
+                    margin-bottom: 1.25rem;
+                }
+                .gos-product-group-title {
+                    font-size: .8rem;
+                    text-transform: uppercase;
+                    letter-spacing: .08em;
+                    color: #6b7280;
+                    margin: 0 0 .625rem 0;
+                    padding-bottom: .375rem;
+                    border-bottom: 1px solid #e5e7eb;
+                    font-weight: 600;
+                }
+                .gos-wizard-step-title {
+                    text-align: center;
+                    font-size: 1.1rem;
+                    color: #4a5568;
+                    font-weight: 500;
+                    margin: 0 0 1.25rem 0;
+                }
+                
                 .gos-product-grid {
                     display: grid;
                     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-                    gap: 1.25rem;
-                    padding: 0.5rem;
+                    gap: 1rem;
                 }
                 
                 .gos-product-card {
-                    padding: 1rem 0.75rem;
-                    border: 3px solid #e1e4e8;
-                    border-radius: 12px;
+                    padding: .75rem .5rem;
+                    border: 2px solid #e5e7eb;
+                    border-radius: 10px;
                     text-align: center;
                     cursor: pointer;
-                    transition: all 0.3s;
+                    transition: all 0.2s ease;
                     background: #fff;
                 }
                 
                 .gos-product-card:hover {
                     border-color: #4e73df;
-                    transform: translateY(-4px);
-                    box-shadow: 0 6px 20px rgba(78, 115, 223, 0.2);
+                    transform: translateY(-3px);
+                    box-shadow: 0 4px 16px rgba(78, 115, 223, 0.12);
                 }
                 
                 .gos-product-card.selected {
                     border-color: #4e73df;
-                    background: #f0f4ff;
+                    background: linear-gradient(135deg, #f0f4ff 0%, #e8ecff 100%);
+                    box-shadow: 0 0 0 3px rgba(78,115,223,0.15);
                 }
                 
                 .gos-product-icon {
-                    width: 120px;
-                    height: 120px;
-                    margin: 0 auto 0.5rem;
+                    width: 130px;
+                    height: 130px;
+                    margin: 0 auto .5rem;
                     display: flex;
                     align-items: center;
                     justify-content: center;
                     overflow: hidden;
+                    border-radius: 6px;
+                    background: #fafbfc;
                 }
                 
                 .gos-product-icon canvas {
@@ -646,8 +697,10 @@
                 
                 .gos-product-name {
                     font-weight: 600;
-                    color: #2c3e50;
-                    margin-bottom: 0.5rem;
+                    color: #1e293b;
+                    font-size: .8rem;
+                    line-height: 1.2;
+                    min-height: 2em;
                 }
                 
                 .gos-product-desc {

@@ -612,16 +612,25 @@ window.GOSBuilders = window.GOSBuilders || {};
   window.GOSBuilders.renderThumbnail = function(productName, size) {
     size = size || 180;
     var scene = new THREE.Scene();
-    var camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
+    var camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
     var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(size, size);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.outputEncoding = THREE.sRGBEncoding || 3001;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping || 6;
+    renderer.toneMappingExposure = 1.1;
 
-    // lighting
-    var dLight = new THREE.DirectionalLight(0xffffff, 0.9);
-    dLight.position.set(3, 4, 5);
-    scene.add(dLight);
-    scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+    // Professional three-point lighting
+    var keyLight = new THREE.DirectionalLight(0xffffff, 0.85);
+    keyLight.position.set(4, 5, 6);
+    scene.add(keyLight);
+    var fillLight = new THREE.DirectionalLight(0xdbe4f0, 0.4);
+    fillLight.position.set(-3, 2, 4);
+    scene.add(fillLight);
+    var rimLight = new THREE.DirectionalLight(0xffffff, 0.25);
+    rimLight.position.set(0, 3, -5);
+    scene.add(rimLight);
+    scene.add(new THREE.AmbientLight(0xf0f4ff, 0.45));
 
     var builder = window.GOSBuilders.getBuilder(productName);
     if (!builder) return renderer.domElement;
@@ -629,15 +638,16 @@ window.GOSBuilders = window.GOSBuilders || {};
     // default dimensions per product type for nice thumbnails
     var isDoor = productName.toLowerCase().indexOf('door') !== -1;
     var isWide = productName.indexOf('Sliding') !== -1 || productName.indexOf('Bifold') !== -1 || productName.indexOf('Fold') !== -1;
+    var isAluminium = productName.indexOf('Aluminium') !== -1 || productName.indexOf('Heritage') !== -1;
     var w = isWide ? 1.8 : (isDoor ? 0.9 : 0.9);
     var h = isDoor ? 2.0 : 1.2;
 
     var mesh = builder({
       width: w, height: h,
       frameDepth: 0.07, frameThk: 0.045,
-      frameColor: isDoor && productName.indexOf('Aluminium') !== -1 ? 0x3a3a3a : 0xffffff,
+      frameColor: isAluminium ? 0x3a3a3a : 0xffffff,
       glassColor: 0xADD8E6,
-      handleColor: 0x808080
+      handleColor: isAluminium ? 0x333333 : 0x808080
     });
 
     // Slight rotation for 3D effect
@@ -645,12 +655,12 @@ window.GOSBuilders = window.GOSBuilders || {};
     mesh.rotation.x = 0.05;
     scene.add(mesh);
 
-    // Auto-fit camera
+    // Auto-fit camera with padding
     var box = new THREE.Box3().setFromObject(mesh);
     var center = box.getCenter(new THREE.Vector3());
     var bSize = box.getSize(new THREE.Vector3());
     var maxDim = Math.max(bSize.x, bSize.y, bSize.z);
-    camera.position.set(center.x, center.y, center.z + maxDim * 1.8);
+    camera.position.set(center.x + maxDim * 0.1, center.y, center.z + maxDim * 1.9);
     camera.lookAt(center);
 
     renderer.render(scene, camera);
