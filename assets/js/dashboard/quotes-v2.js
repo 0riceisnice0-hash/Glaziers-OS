@@ -7047,14 +7047,16 @@
         }
 
         stop3D() {
-            if (this._3dAnimId) cancelAnimationFrame(this._3dAnimId);
+            if (this._3dAnimId) {
+                cancelAnimationFrame(this._3dAnimId);
+                this._3dAnimId = null;
+            }
             if (this._3dRenderer) {
                 this._3dRenderer.dispose();
                 this._3dRenderer = null;
             }
             this._3dScene = null;
             this._3dMesh = null;
-            this._3dAnimId = null;
         }
 
         renderProductThumbnails() {

@@ -240,14 +240,18 @@ window.GOSBuilders = window.GOSBuilders || {};
     // glass frame around insert
     var gfMat = frameMat(o.frameColor);
     var gfThk = 0.02;
-    // top
-    g.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(glW + gfThk * 2, gfThk, 0.02), gfMat), { position: new THREE.Vector3(0, glY + glH / 2 + gfThk / 2, o.frameDepth * 0.4) }));
-    // bottom
-    g.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(glW + gfThk * 2, gfThk, 0.02), gfMat), { position: new THREE.Vector3(0, glY - glH / 2 - gfThk / 2, o.frameDepth * 0.4) }));
-    // left
-    g.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(gfThk, glH, 0.02), gfMat), { position: new THREE.Vector3(-glW / 2 - gfThk / 2, glY, o.frameDepth * 0.4) }));
-    // right
-    g.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(gfThk, glH, 0.02), gfMat), { position: new THREE.Vector3(glW / 2 + gfThk / 2, glY, o.frameDepth * 0.4) }));
+    var gfTop = new THREE.Mesh(new THREE.BoxGeometry(glW + gfThk * 2, gfThk, 0.02), gfMat);
+    gfTop.position.set(0, glY + glH / 2 + gfThk / 2, o.frameDepth * 0.4);
+    g.add(gfTop);
+    var gfBot = new THREE.Mesh(new THREE.BoxGeometry(glW + gfThk * 2, gfThk, 0.02), gfMat);
+    gfBot.position.set(0, glY - glH / 2 - gfThk / 2, o.frameDepth * 0.4);
+    g.add(gfBot);
+    var gfLeft = new THREE.Mesh(new THREE.BoxGeometry(gfThk, glH, 0.02), gfMat);
+    gfLeft.position.set(-glW / 2 - gfThk / 2, glY, o.frameDepth * 0.4);
+    g.add(gfLeft);
+    var gfRight = new THREE.Mesh(new THREE.BoxGeometry(gfThk, glH, 0.02), gfMat);
+    gfRight.position.set(glW / 2 + gfThk / 2, glY, o.frameDepth * 0.4);
+    g.add(gfRight);
     // raised lower panels
     var rpH = pH * 0.2;
     var rp1 = new THREE.Mesh(new THREE.BoxGeometry(pW * 0.7, rpH, 0.01), frameMat(o.frameColor, 0.15));
@@ -553,14 +557,18 @@ window.GOSBuilders = window.GOSBuilders || {};
     // spacer bar around edge
     var sMat = new THREE.MeshStandardMaterial({ color: 0xc0c0c0, metalness: 0.7, roughness: 0.3 });
     var sThk = 0.015;
-    // top
-    g.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(gW, sThk, 0.02), sMat), { position: new THREE.Vector3(0, gH / 2, 0) }));
-    // bottom
-    g.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(gW, sThk, 0.02), sMat), { position: new THREE.Vector3(0, -gH / 2, 0) }));
-    // left
-    g.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(sThk, gH, 0.02), sMat), { position: new THREE.Vector3(-gW / 2, 0, 0) }));
-    // right
-    g.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(sThk, gH, 0.02), sMat), { position: new THREE.Vector3(gW / 2, 0, 0) }));
+    var sTop = new THREE.Mesh(new THREE.BoxGeometry(gW, sThk, 0.02), sMat);
+    sTop.position.set(0, gH / 2, 0);
+    g.add(sTop);
+    var sBot = new THREE.Mesh(new THREE.BoxGeometry(gW, sThk, 0.02), sMat);
+    sBot.position.set(0, -gH / 2, 0);
+    g.add(sBot);
+    var sLeft = new THREE.Mesh(new THREE.BoxGeometry(sThk, gH, 0.02), sMat);
+    sLeft.position.set(-gW / 2, 0, 0);
+    g.add(sLeft);
+    var sRight = new THREE.Mesh(new THREE.BoxGeometry(sThk, gH, 0.02), sMat);
+    sRight.position.set(gW / 2, 0, 0);
+    g.add(sRight);
     return g;
   };
 
