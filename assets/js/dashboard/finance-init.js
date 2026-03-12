@@ -124,8 +124,15 @@
                 
                 <!-- Tab Content: Payments -->
                 <div id="gos-finance-tab-payments" class="gos-finance-tab-content">
-                    <div style="padding: 40px; text-align: center; color: #6b7280;">
-                        <p>Payments reconciliation coming soon...</p>
+                    <div class="gos-finance-filters">
+                        <div class="gos-finance-search">
+                            <input type="text" placeholder="Search payments..." />
+                        </div>
+                    </div>
+                    <div class="gos-payment-table-container">
+                        <div class="gos-finance-loading">
+                            <div class="gos-finance-spinner"></div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -194,6 +194,9 @@
     transform: translateY(-50%);
     font-size: 14px;
     opacity: 0.5;
+    line-height: 1;
+    pointer-events: none;
+    z-index: 1;
 }
 
 .gos-finance-filter-select {

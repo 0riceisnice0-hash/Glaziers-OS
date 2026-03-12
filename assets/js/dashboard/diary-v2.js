@@ -1680,8 +1680,28 @@ console.log('🔵 DIARY V2 FILE LOADING...');
                     this.api.fetchJobs()
                 ]);
 
-                // Process events
-                const events = eventsResult.success ? eventsResult.data : [];
+                // Process events - normalize field names (DataStore uses start/end, diary expects datetime/duration)
+                const rawEvents = eventsResult.success ? eventsResult.data : [];
+                const events = rawEvents.map(function(e) {
+                    if (!e.datetime && e.start) {
+                        e.datetime = e.start;
+                    }
+                    if (!e.duration && e.start && e.end) {
+                        var ms = new Date(e.end).getTime() - new Date(e.start).getTime();
+                        e.duration = ms > 0 ? ms / 3600000 : 1;
+                    }
+                    if (!e.duration) e.duration = 1;
+                    if (!e.type) e.type = 'other';
+                    if (!e.fitter && e.fitter_id) {
+                        var matchedFitter = (fittersResult.success ? fittersResult.data : []).find(function(f) { return f.id == e.fitter_id; });
+                        if (matchedFitter) e.fitter = matchedFitter.name;
+                    }
+                    if (!e.job && e.job_id) {
+                        var matchedJob = (jobsResult.success ? jobsResult.data : []).find(function(j) { return j.id == e.job_id; });
+                        if (matchedJob) e.job = matchedJob;
+                    }
+                    return e;
+                });
                 
                 // Process fitters
                 const fitters = fittersResult.success ? 

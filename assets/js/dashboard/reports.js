@@ -313,7 +313,7 @@ jQuery(function ($) {
 
         // PDF export
         $panel.find('#rpt-export-pdf').on('click', function () {
-            showToast('PDF export coming soon — this feature is under development.');
+            exportPDF(data);
         });
 
         // Sortable team table
@@ -369,6 +369,89 @@ jQuery(function ($) {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
         showToast('CSV exported successfully!');
+    }
+
+    /* ───────── PDF export ───────── */
+    function exportPDF(data) {
+        const m = computeMetrics(data);
+        const dateStr = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+
+        // Build an HTML document suitable for print/PDF
+        const monthRows = m.monthlyRevenue.map(item =>
+            `<tr><td>${escHtml(item.month)}</td><td style="text-align:right">£${Number(item.amount||0).toLocaleString('en-GB')}</td></tr>`
+        ).join('');
+
+        const funnelRows = m.funnel.map(f =>
+            `<tr><td>${escHtml(f.stage)}</td><td style="text-align:right">${f.count}</td></tr>`
+        ).join('');
+
+        const teamRows = m.teamData.map(t =>
+            `<tr><td>${escHtml(t.name)}</td><td style="text-align:right">${t.jobs_completed || 0}</td><td style="text-align:right">£${Number(t.revenue||0).toLocaleString('en-GB')}</td><td style="text-align:right">${(t.rating||0).toFixed(1)}</td></tr>`
+        ).join('');
+
+        const areaRows = m.areas.map(a =>
+            `<tr><td>${escHtml(a.area)}</td><td style="text-align:right">${a.count}</td><td style="text-align:right">£${Number(a.revenue||0).toLocaleString('en-GB')}</td></tr>`
+        ).join('');
+
+        const html = `<!DOCTYPE html><html><head>
+<title>GlazierOS Report - ${dateStr}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:40px;color:#1e293b;font-size:12px;max-width:800px;margin:0 auto}
+h1{font-size:22px;margin-bottom:4px}
+h2{font-size:16px;margin:24px 0 8px;padding-bottom:6px;border-bottom:2px solid #667eea;color:#334155}
+.meta{color:#64748b;font-size:11px;margin-bottom:24px}
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:24px}
+.kpi{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;text-align:center}
+.kpi-label{font-size:10px;text-transform:uppercase;color:#64748b;letter-spacing:.5px}
+.kpi-value{font-size:18px;font-weight:700;margin-top:4px}
+table{width:100%;border-collapse:collapse;margin-bottom:16px}
+th,td{padding:6px 10px;border-bottom:1px solid #e2e8f0;text-align:left;font-size:11px}
+th{background:#f1f5f9;font-weight:600;color:#475569}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media print{body{padding:20px}h1{font-size:18px}}
+</style>
+</head><body>
+<h1>📊 GlazierOS Business Report</h1>
+<p class="meta">Generated: ${dateStr} • Period: ${currentRange.charAt(0).toUpperCase()+currentRange.slice(1)}</p>
+
+<div class="kpi-grid">
+<div class="kpi"><div class="kpi-label">Total Revenue</div><div class="kpi-value">£${fmt(m.totalRevenue)}</div></div>
+<div class="kpi"><div class="kpi-label">Total Quotes</div><div class="kpi-value">${fmtInt(m.totalQuotes)}</div></div>
+<div class="kpi"><div class="kpi-label">Conversion Rate</div><div class="kpi-value">${m.conversionRate}%</div></div>
+<div class="kpi"><div class="kpi-label">Avg Order Value</div><div class="kpi-value">£${fmt(m.avgOrderValue)}</div></div>
+<div class="kpi"><div class="kpi-label">Outstanding</div><div class="kpi-value">£${fmt(m.outstanding)}</div></div>
+</div>
+
+<div class="two-col">
+<div>
+<h2>Monthly Revenue</h2>
+<table><thead><tr><th>Month</th><th style="text-align:right">Revenue</th></tr></thead><tbody>${monthRows}</tbody></table>
+</div>
+<div>
+<h2>Pipeline Funnel</h2>
+<table><thead><tr><th>Stage</th><th style="text-align:right">Count</th></tr></thead><tbody>${funnelRows}</tbody></table>
+</div>
+</div>
+
+<h2>Team Performance</h2>
+<table><thead><tr><th>Name</th><th style="text-align:right">Jobs</th><th style="text-align:right">Revenue</th><th style="text-align:right">Rating</th></tr></thead><tbody>${teamRows}</tbody></table>
+
+<h2>Geographic Analysis</h2>
+<table><thead><tr><th>Area</th><th style="text-align:right">Jobs</th><th style="text-align:right">Revenue</th></tr></thead><tbody>${areaRows}</tbody></table>
+
+<p style="text-align:center;margin:24px 0;"><button onclick="window.print()" style="padding:10px 24px;background:#667eea;color:white;border:none;border-radius:6px;font-size:14px;cursor:pointer;">Print / Save as PDF</button></p>
+</body></html>`;
+
+        // Open in new window for print-to-PDF
+        const win = window.open('', '_blank');
+        if (win) {
+            win.document.write(html);
+            win.document.close();
+            showToast('PDF report opened — use your browser\'s Print dialog to save as PDF.');
+        } else {
+            showToast('Please allow popups to export PDF reports.');
+        }
     }
 
     /* ───────── toast ───────── */
