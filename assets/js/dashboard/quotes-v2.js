@@ -6136,6 +6136,7 @@
         }
 
         close() {
+            $(document).off('keydown.quotePreview');
             $('#gos-quote-preview-modal').removeClass('show');
             setTimeout(() => {
                 $('#gos-quote-preview-modal').remove();
@@ -6539,7 +6540,8 @@
             this.currentIndex = newIndex;
             this.quote = this.allQuotes[newIndex];
             
-            // Remove old modal
+            // Clean up old keyboard listeners and modal
+            $(document).off('keydown.quotePreview');
             $('#gos-quote-preview-modal').remove();
             
             // Render new one
