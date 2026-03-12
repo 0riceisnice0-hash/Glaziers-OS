@@ -54,9 +54,8 @@ jQuery(function($) {
 
     function loadBranches() {
         $panel.html('<p>Loading branches...</p>');
-        fetch('/wp-json/wp/v2/gos_branch', {
-            headers: { 'X-WP-Nonce': wpApiSettings.nonce }
-        })
+        // DataStore fetch interceptor handles /wp-json/wp/v2/gos_branch
+        fetch('/wp-json/wp/v2/gos_branch')
             .then(res => res.json())
             .then(branches => {
                 render(branches);
@@ -83,14 +82,13 @@ jQuery(function($) {
         e.preventDefault();
         const id = $('#gsa-branch-id').val();
         const name = $('#gsa-branch-name').val();
-        const method = id ? 'POST' : 'POST';
+        const method = 'POST';
         const url = id ? `/wp-json/wp/v2/gos_branch/${id}` : '/wp-json/wp/v2/gos_branch';
 
         fetch(url, {
             method,
             headers: {
-                'Content-Type': 'application/json',
-                'X-WP-Nonce': wpApiSettings.nonce
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({ title: name, status: 'publish' })
         }).then(() => {
@@ -101,9 +99,7 @@ jQuery(function($) {
 
     $panel.on('click', '.gos-button-edit', function() {
         const id = $(this).closest('tr').data('id');
-        fetch(`/wp-json/wp/v2/gos_branch/${id}`, {
-            headers: { 'X-WP-Nonce': wpApiSettings.nonce }
-        })
+        fetch(`/wp-json/wp/v2/gos_branch/${id}`)
             .then(res => res.json())
             .then(branch => openModal(branch));
     });
@@ -112,8 +108,7 @@ jQuery(function($) {
         const id = $(this).closest('tr').data('id');
         if (confirm('Are you sure you want to delete this branch?')) {
             fetch(`/wp-json/wp/v2/gos_branch/${id}`, {
-                method: 'DELETE',
-                headers: { 'X-WP-Nonce': wpApiSettings.nonce }
+                method: 'DELETE'
             }).then(() => loadBranches());
         }
     });

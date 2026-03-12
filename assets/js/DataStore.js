@@ -135,13 +135,13 @@
       { id: 3, name: 'Birmingham Branch',  postcode: 'B1 1BB',   created_at: now(), updated_at: now() },
     ]);
 
-    // Fitters
+    // Fitters / team members – includes fields expected by team.js
     write('fitters', [
-      { id: 1, name: 'James Wilson',   email: 'james.wilson@glazieros.co.uk',   phone: '07700 900001', branch_id: 1, skills: ['window_install', 'door_install'], status: 'active', created_at: now(), updated_at: now() },
-      { id: 2, name: 'Sarah Brown',    email: 'sarah.brown@glazieros.co.uk',    phone: '07700 900002', branch_id: 1, skills: ['window_install'],                status: 'active', created_at: now(), updated_at: now() },
-      { id: 3, name: 'Mike Davies',    email: 'mike.davies@glazieros.co.uk',    phone: '07700 900003', branch_id: 2, skills: ['window_install', 'door_install'], status: 'active', created_at: now(), updated_at: now() },
-      { id: 4, name: 'Emma Thompson',  email: 'emma.thompson@glazieros.co.uk',  phone: '07700 900004', branch_id: 2, skills: ['door_install'],                  status: 'active', created_at: now(), updated_at: now() },
-      { id: 5, name: 'Tom Harris',     email: 'tom.harris@glazieros.co.uk',     phone: '07700 900005', branch_id: 3, skills: ['window_install', 'door_install'], status: 'active', created_at: now(), updated_at: now() },
+      { id: 1, name: 'James Wilson',   email: 'james.wilson@glazieros.co.uk',   phone: '07700 900001', mobile: '07700 900001', branch_id: 1, branch: 'London HQ',        role: 'fitter',     job_title: 'Senior Fitter',   skills: ['window_install', 'door_install'], status: 'active', hourly_rate: 22, salary: 42000, start_date: '2022-03-15', contract_type: 'Full-time', pto_earned: 25, pto_taken: 8,  pto_remaining: 17, sick_days_used: 2, hours_this_week: 38, hours_this_month: 152, created_at: now(), updated_at: now() },
+      { id: 2, name: 'Sarah Brown',    email: 'sarah.brown@glazieros.co.uk',    phone: '07700 900002', mobile: '07700 900002', branch_id: 1, branch: 'London HQ',        role: 'fitter',     job_title: 'Fitter',          skills: ['window_install'],                status: 'active', hourly_rate: 18, salary: 34000, start_date: '2023-01-10', contract_type: 'Full-time', pto_earned: 25, pto_taken: 5,  pto_remaining: 20, sick_days_used: 1, hours_this_week: 40, hours_this_month: 160, created_at: now(), updated_at: now() },
+      { id: 3, name: 'Mike Davies',    email: 'mike.davies@glazieros.co.uk',    phone: '07700 900003', mobile: '07700 900003', branch_id: 2, branch: 'Manchester Branch', role: 'fitter',     job_title: 'Lead Fitter',     skills: ['window_install', 'door_install'], status: 'active', hourly_rate: 24, salary: 46000, start_date: '2021-06-01', contract_type: 'Full-time', pto_earned: 28, pto_taken: 12, pto_remaining: 16, sick_days_used: 0, hours_this_week: 36, hours_this_month: 144, created_at: now(), updated_at: now() },
+      { id: 4, name: 'Emma Thompson',  email: 'emma.thompson@glazieros.co.uk',  phone: '07700 900004', mobile: '07700 900004', branch_id: 2, branch: 'Manchester Branch', role: 'surveyor',   job_title: 'Surveyor',        skills: ['door_install'],                  status: 'active', hourly_rate: 20, salary: 38000, start_date: '2023-09-20', contract_type: 'Full-time', pto_earned: 25, pto_taken: 3,  pto_remaining: 22, sick_days_used: 1, hours_this_week: 32, hours_this_month: 128, created_at: now(), updated_at: now() },
+      { id: 5, name: 'Tom Harris',     email: 'tom.harris@glazieros.co.uk',     phone: '07700 900005', mobile: '07700 900005', branch_id: 3, branch: 'Birmingham Branch', role: 'apprentice', job_title: 'Apprentice Fitter', skills: ['window_install', 'door_install'], status: 'active', hourly_rate: 12, salary: 22000, start_date: '2024-02-01', contract_type: 'Full-time', pto_earned: 25, pto_taken: 2,  pto_remaining: 23, sick_days_used: 0, hours_this_week: 40, hours_this_month: 160, created_at: now(), updated_at: now() },
     ]);
 
     // Jobs (with embedded client data)
@@ -234,18 +234,18 @@
         id: 1,
         pricing: { window: 300, door: 350 },
         form_fields: [
-          { name: 'client_name',  label: 'Client Name',  type: 'text',   required: true  },
-          { name: 'client_email', label: 'Email',        type: 'email',  required: false },
-          { name: 'client_phone', label: 'Phone',        type: 'tel',    required: false },
-          { name: 'address',      label: 'Address',      type: 'text',   required: true  },
-          { name: 'job_type',     label: 'Job Type',     type: 'select', required: true, options: ['window','door'] },
-          { name: 'width',        label: 'Width (m)',    type: 'number', required: true  },
-          { name: 'height',       label: 'Height (m)',   type: 'number', required: true  },
-          { name: 'notes',        label: 'Notes',        type: 'textarea',required: false },
+          { id: 'client_name',  label: 'Client Name',  type: 'text',   required: true  },
+          { id: 'client_email', label: 'Email',        type: 'email',  required: false },
+          { id: 'client_phone', label: 'Phone',        type: 'tel',    required: false },
+          { id: 'address',      label: 'Address',      type: 'text',   required: true  },
+          { id: 'job_type',     label: 'Job Type',     type: 'select', required: true, options: ['window','door'] },
+          { id: 'width',        label: 'Width (m)',    type: 'number', required: true  },
+          { id: 'height',       label: 'Height (m)',   type: 'number', required: true  },
+          { id: 'notes',        label: 'Notes',        type: 'textarea',required: false },
         ],
         pricing_rules: [
-          { id: 1, name: 'Standard Window', type: 'window', base_price: 300, per_sqm: 150 },
-          { id: 2, name: 'Standard Door',   type: 'door',   base_price: 350, per_sqm: 200 },
+          { id: 1, product_type: 'Standard Window', type: 'window', base_price: 300, price_per_sqm: 150 },
+          { id: 2, product_type: 'Standard Door',   type: 'door',   base_price: 350, price_per_sqm: 200 },
         ],
         created_at: now(), updated_at: now(),
       },
@@ -310,6 +310,7 @@
     }).length;
 
     return {
+      total_jobs:        jobs.length,
       total_leads:       jobs.length,
       total_quotes:      jobs.filter(function (j) { return j.lead_status === 'Quoted'; }).length,
       active_jobs:       jobs.filter(function (j) { return j.install_status === 'In Progress'; }).length,
@@ -411,6 +412,13 @@
     if (p === '/glazieros/v1/quote' && method === 'POST') {
       var newJob = ds.create('jobs', Object.assign({ post_status: 'publish', install_status: 'Pending' }, body));
       return Promise.resolve(mockResponse(newJob));
+    }
+    // Bulk delete jobs
+    var jobsBulkDelete = p.match(/^\/glazieros\/v1\/jobs\/bulk-delete$/);
+    if (jobsBulkDelete && method === 'POST') {
+      var bulkIds = body.ids || [];
+      bulkIds.forEach(function (id) { ds.delete('jobs', id); });
+      return Promise.resolve(mockResponse({ success: true, deleted: bulkIds.length }));
     }
     var jobIdMatch = p.match(/^\/glazieros\/v1\/jobs\/(\d+)$/);
     if (jobIdMatch) {

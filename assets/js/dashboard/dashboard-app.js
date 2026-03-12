@@ -2,28 +2,9 @@
 console.log('⚙️ dashboard-app.js loaded');
 
 jQuery(function($) {
-  // 1) Grab the original dashboard container
-  const dash = document.getElementById('gos-dashboard-app');
-  if (!dash) return;
-
-  // --- Fullscreen Logic ---
-  const appContainer = document.createElement('div');
-  appContainer.id = 'gos-dashboard-app'; // reuse same ID so our CSS kicks in
-  Object.assign(appContainer.style, {
-    position: 'fixed',
-    top:       '0',
-    left:      '0',
-    width:     '100%',
-    height:    '100%',
-    zIndex:    '99999',
-    overflow:  'hidden',
-  });
-
-  document.body.appendChild(appContainer);
-  Array.from(document.body.children).forEach(child => {
-    if (child !== appContainer) child.style.display = 'none';
-  });
-  document.body.style.overflow = 'hidden';
+  // 1) Grab the existing dashboard container from index.html
+  const appContainer = document.getElementById('gos-dashboard-app');
+  if (!appContainer) return;
 
   // Tabs (removed 'new' - quote creation now happens in modal from quotes panel)
   const tabs = ['quotes','diary','team','settings','invoices','reports','audit-logs','branches','quote-detail'];
@@ -31,6 +12,9 @@ jQuery(function($) {
 
   let sidebarHtml = `
     <div class="gsa-sidebar-header">GlazierOS</div>
+    <div class="gsa-search-wrapper">
+      <input type="text" id="gsa-global-search" class="gsa-search-input" placeholder="Search quotes, fitters…">
+    </div>
   `;
   tabs.forEach(tab => {
     const isHidden = tab === 'quote-detail' ? 'style="display:none;"' : '';
@@ -114,6 +98,75 @@ jQuery(function($) {
       text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
       background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
       backdrop-filter: blur(10px);
+    }
+
+    /* ========================================
+       SIDEBAR SEARCH
+       ======================================== */
+    .gsa-search-wrapper {
+      padding: 0.5rem 0.75rem 0.75rem;
+      position: relative;
+    }
+
+    .gsa-search-input {
+      width: 100%;
+      padding: 0.65rem 0.85rem !important;
+      background: rgba(255, 255, 255, 0.12) !important;
+      color: #ffffff !important;
+      border: 1px solid rgba(255, 255, 255, 0.2) !important;
+      border-radius: 8px !important;
+      font-size: 0.875rem !important;
+      transition: all 0.2s ease !important;
+    }
+
+    .gsa-search-input::placeholder {
+      color: rgba(255, 255, 255, 0.55);
+    }
+
+    .gsa-search-input:focus {
+      background: rgba(255, 255, 255, 0.2) !important;
+      border-color: rgba(255, 255, 255, 0.4) !important;
+      outline: none !important;
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1) !important;
+    }
+
+    /* Search Results Overlay */
+    #gsa-search-results-container {
+      position: fixed;
+      top: 130px;
+      left: 16px;
+      width: 230px;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      max-height: 350px;
+      overflow-y: auto;
+      z-index: 1002;
+      display: none;
+    }
+
+    .gsa-search-result {
+      padding: 0.65rem 0.85rem;
+      border-bottom: 1px solid #f3f4f6;
+      cursor: pointer;
+      transition: background 0.15s ease;
+      font-size: 0.875rem;
+      color: #374151;
+    }
+
+    .gsa-search-result:last-child {
+      border-bottom: none;
+    }
+
+    .gsa-search-result:hover {
+      background: linear-gradient(90deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+    }
+
+    .gsa-search-result small {
+      color: #9ca3af;
+      font-size: 0.75rem;
+      margin-left: 0.25rem;
     }
 
     /* ========================================

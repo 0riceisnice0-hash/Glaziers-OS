@@ -81,9 +81,8 @@ jQuery(function($) {
 
     function loadStats() {
         $panel.html('<p>Loading reports...</p>');
-        fetch('/wp-json/glazieros/v1/stats', {
-            headers: { 'X-WP-Nonce': wpApiSettings.nonce }
-        })
+        // DataStore fetch interceptor handles /wp-json/glazieros/v1/stats
+        fetch('/wp-json/glazieros/v1/stats')
             .then(res => {
                 if (!res.ok) throw new Error('Failed to load stats.');
                 return res.json();

@@ -91,9 +91,9 @@ jQuery(document).on('gsa:panel:activated', (e, tab) => {
                                 <select name="install_status" id="gsa-detail-install-status-select" class="gos-input">${installStatusOptions}</select>
                             </label>
                             <div class="gsa-static-details">
-                                <strong>Type:</strong> ${job.type}<br>
-                                <strong>Size:</strong> ${(job.width*1000).toFixed(0)}×${(job.height*1000).toFixed(0)} mm<br>
-                                <strong>Price:</strong> £${job.price.toFixed(2)}
+                                <strong>Type:</strong> ${job.type || 'N/A'}<br>
+                                <strong>Size:</strong> ${job.width ? (job.width*1000).toFixed(0) : '?'}×${job.height ? (job.height*1000).toFixed(0) : '?'} mm<br>
+                                <strong>Price:</strong> £${(Number(job.price) || 0).toFixed(2)}
                             </div>
                         </div>
                         <label>Notes <textarea name="notes" class="gos-input" rows="5">${escapeHTML(job.notes)}</textarea></label>
@@ -275,10 +275,10 @@ jQuery(document).on('gsa:panel:activated', (e, tab) => {
         const light = new THREE.DirectionalLight(0xffffff, 1);
         light.position.set(5, 5, 5);
         scene.add(light, new THREE.AmbientLight(0x404040));
-        const builder = job.type === 'door' ? window.GOSBuilders.testdoor : window.GOSBuilders.testwindow;
+        const builder = (job.type === 'door' && window.GOSBuilders.testdoor) ? window.GOSBuilders.testdoor : window.GOSBuilders.testwindow;
         const mesh = builder({
-          width: job.width,
-          height: job.height,
+          width: Number(job.width) || 0.9,
+          height: Number(job.height) || 1.2,
           frameDepth: 0.1,
           frameThk: 0.05,
           frameColor: 0xffffff,
