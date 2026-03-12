@@ -328,7 +328,7 @@
                     <td>${this.formatDate(invoice.invoice_date || invoice.issued_date)}</td>
                     <td>${this.formatDate(invoice.due_date)}</td>
                     <td><strong>£${this.formatCurrency(invoice.total_amount || invoice.amount)}</strong></td>
-                    <td>£${this.formatCurrency(invoice.balance_due != null ? invoice.balance_due : invoice.total_amount)}</td>
+                    <td>£${this.formatCurrency(invoice.balance_due != null ? invoice.balance_due : (invoice.total_amount || invoice.amount || 0))}</td>
                     <td><span class="gos-finance-status ${invoice.status}">${this.escapeHtml(invoice.status)}</span></td>
                     <td>
                         <div class="gos-finance-actions">

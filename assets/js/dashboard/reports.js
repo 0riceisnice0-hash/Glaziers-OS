@@ -440,7 +440,7 @@ th{background:#f1f5f9;font-weight:600;color:#475569}
 <h2>Geographic Analysis</h2>
 <table><thead><tr><th>Area</th><th style="text-align:right">Jobs</th><th style="text-align:right">Revenue</th></tr></thead><tbody>${areaRows}</tbody></table>
 
-<script>window.onload=function(){window.print()}</script>
+<p style="text-align:center;margin:24px 0;"><button onclick="window.print()" style="padding:10px 24px;background:#667eea;color:white;border:none;border-radius:6px;font-size:14px;cursor:pointer;">Print / Save as PDF</button></p>
 </body></html>`;
 
         // Open in new window for print-to-PDF
