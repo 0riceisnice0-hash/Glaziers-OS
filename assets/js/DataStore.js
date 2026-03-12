@@ -595,6 +595,18 @@
       }
     }
 
+    // Settings – product catalog (enabled products for quoting tool)
+    if (p === '/glazieros/v1/settings/product-catalog') {
+      var sCat = ds.getAll('settings');
+      if (method === 'GET') {
+        return Promise.resolve(mockResponse((sCat[0] && sCat[0].product_catalog) || null));
+      }
+      if (method === 'POST') {
+        if (sCat.length) ds.update('settings', sCat[0].id, { product_catalog: body });
+        return Promise.resolve(mockResponse({ success: true }));
+      }
+    }
+
     // Stats
     if (p === '/glazieros/v1/stats' && method === 'GET') {
       return Promise.resolve(mockResponse(ds._calcStats()));
