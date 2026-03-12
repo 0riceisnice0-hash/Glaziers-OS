@@ -346,7 +346,7 @@
         }
 
         getProductIcon(type) {
-            return '<span style="font-size:2rem;color:#4e73df;">' + (type.charAt(0) || '?') + '</span>';
+            return '<span class="gos-product-emoji">' + (type.charAt(0) || '?') + '</span>';
         }
 
         getProductDescription(type) {
@@ -701,6 +701,11 @@
                     font-size: .8rem;
                     line-height: 1.2;
                     min-height: 2em;
+                }
+                
+                .gos-product-emoji {
+                    font-size: 2rem;
+                    color: #4e73df;
                 }
                 
                 .gos-product-desc {

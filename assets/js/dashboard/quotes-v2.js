@@ -7111,7 +7111,7 @@
 
         getProductIcon(type) {
             // Fallback only - thumbnails are rendered by renderProductThumbnails()
-            return '<span class="gos-product-emoji" style="font-size:2rem;color:#4e73df;">' + (type.charAt(0) || '?') + '</span>';
+            return '<span class="gos-product-emoji">' + (type.charAt(0) || '?') + '</span>';
         }
 
         attachHandlers() {
