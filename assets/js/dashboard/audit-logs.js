@@ -47,9 +47,8 @@ jQuery(function($) {
 
     function loadLogs() {
         $panel.html('<p>Loading audit logs...</p>');
-        fetch('/wp-json/glazieros/v1/audit-logs', {
-            headers: { 'X-WP-Nonce': wpApiSettings.nonce }
-        })
+        // DataStore fetch interceptor handles /wp-json/glazieros/v1/audit-logs
+        fetch('/wp-json/glazieros/v1/audit-logs')
             .then(res => {
                 if (!res.ok) throw new Error('Failed to load audit logs.');
                 return res.json();

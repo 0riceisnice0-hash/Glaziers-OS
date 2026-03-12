@@ -121,16 +121,16 @@
         const $panel = $('#gsa-diary');
         const state = this.state.getState();
         
-        // Click on events (all views)
-        $panel.on('click', '.gos-month-event, .gos-week-event, .gos-day-event, .gos-timeline-event', (e) => {
+        // Click on events (all views) - use actual rendered class names
+        $panel.on('click', '.gos-month-event-pill, .gos-week-event-pill, .gos-day-event-card, .gos-timeline-event-block', (e) => {
             const eventId = parseInt($(e.currentTarget).data('event-id'));
             this.openEventModal('view', eventId);
         });
         
-        // Click on cells to create events
-        $panel.on('click', '.gos-week-cell, .gos-day-cell, .gos-month-day', (e) => {
+        // Click on cells to create events - use actual rendered class names
+        $panel.on('click', '.gos-week-day-cell, .gos-day-hour-cell, .gos-month-cell-modern', (e) => {
             // Don't trigger if clicking on an event
-            if ($(e.target).closest('.gos-week-event, .gos-day-event, .gos-month-event').length) {
+            if ($(e.target).closest('.gos-week-event-pill, .gos-day-event-card, .gos-month-event-pill').length) {
                 return;
             }
             
@@ -155,12 +155,12 @@
         const $panel = $('#gsa-diary');
         
         // Make events draggable
-        $panel.find('.gos-week-event, .gos-day-event').each((index, element) => {
+        $panel.find('.gos-week-event-pill, .gos-day-event-card').each((index, element) => {
             element.setAttribute('draggable', 'true');
         });
         
         // Drag start
-        $panel.on('dragstart', '.gos-week-event, .gos-day-event', (e) => {
+        $panel.on('dragstart', '.gos-week-event-pill, .gos-day-event-card', (e) => {
             const eventId = parseInt($(e.currentTarget).data('event-id'));
             this.draggedEvent = eventId;
             $(e.currentTarget).addClass('gos-dragging');
@@ -168,24 +168,24 @@
         });
         
         // Drag end
-        $panel.on('dragend', '.gos-week-event, .gos-day-event', (e) => {
+        $panel.on('dragend', '.gos-week-event-pill, .gos-day-event-card', (e) => {
             $(e.currentTarget).removeClass('gos-dragging');
             this.draggedEvent = null;
         });
         
         // Drag over
-        $panel.on('dragover', '.gos-week-cell, .gos-day-cell', (e) => {
+        $panel.on('dragover', '.gos-week-day-cell, .gos-day-hour-cell', (e) => {
             e.preventDefault();
             $(e.currentTarget).addClass('gos-drag-over');
         });
         
         // Drag leave
-        $panel.on('dragleave', '.gos-week-cell, .gos-day-cell', (e) => {
+        $panel.on('dragleave', '.gos-week-day-cell, .gos-day-hour-cell', (e) => {
             $(e.currentTarget).removeClass('gos-drag-over');
         });
         
         // Drop
-        $panel.on('drop', '.gos-week-cell, .gos-day-cell', async (e) => {
+        $panel.on('drop', '.gos-week-day-cell, .gos-day-hour-cell', async (e) => {
             e.preventDefault();
             $(e.currentTarget).removeClass('gos-drag-over');
             

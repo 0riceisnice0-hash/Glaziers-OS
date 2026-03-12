@@ -175,19 +175,13 @@ jQuery(function($) {
         `);
     }
 
-    // Load all settings from the REST API
+    // Load all settings from DataStore (via fetch interceptor)
     async function loadAllSettings() {
         try {
             const [pr, fr, prr] = await Promise.all([
-                fetch('/wp-json/glazieros/v1/settings/pricing', {
-                    headers: { 'X-WP-Nonce': wpApiSettings.nonce }
-                }),
-                fetch('/wp-json/glazieros/v1/settings/form', {
-                    headers: { 'X-WP-Nonce': wpApiSettings.nonce }
-                }),
-                fetch('/wp-json/glazieros/v1/pricing-rules', {
-                    headers: { 'X-WP-Nonce': wpApiSettings.nonce }
-                })
+                fetch('/wp-json/glazieros/v1/settings/pricing'),
+                fetch('/wp-json/glazieros/v1/settings/form'),
+                fetch('/wp-json/glazieros/v1/pricing-rules')
             ]);
             if (!pr.ok||!fr.ok||!prr.ok) throw new Error('Failed to load settings');
 
@@ -200,7 +194,6 @@ jQuery(function($) {
               : DEFAULT_FIELDS;
 
             render();
-            attachSaveHandlers();
         } catch (err) {
             $panel.html(`<p class="gos-error">Error loading settings: ${err.message}</p>`);
         }
@@ -216,10 +209,7 @@ jQuery(function($) {
             try {
                 const res = await fetch('/wp-json/glazieros/v1/settings/pricing', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-WP-Nonce': wpApiSettings.nonce
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(body)
                 });
                 if (!res.ok) throw new Error(await res.text());
@@ -243,10 +233,7 @@ jQuery(function($) {
             try {
                 const res = await fetch('/wp-json/glazieros/v1/pricing-rules', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-WP-Nonce': wpApiSettings.nonce
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(rules)
                 });
                 if (!res.ok) throw new Error(await res.text());
@@ -311,10 +298,7 @@ jQuery(function($) {
             try {
                 const res = await fetch('/wp-json/glazieros/v1/settings/form', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-WP-Nonce': wpApiSettings.nonce
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(updated)
                 });
                 if (!res.ok) throw new Error(await res.text());
@@ -356,6 +340,7 @@ jQuery(function($) {
         $panel.data('initialized', true);
 
         injectCSS();
+        attachSaveHandlers();
         $panel.html('<p>Loading settings…</p>');
         loadAllSettings();
     });

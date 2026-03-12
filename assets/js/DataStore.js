@@ -135,13 +135,13 @@
       { id: 3, name: 'Birmingham Branch',  postcode: 'B1 1BB',   created_at: now(), updated_at: now() },
     ]);
 
-    // Fitters
+    // Fitters / team members – includes fields expected by team.js
     write('fitters', [
-      { id: 1, name: 'James Wilson',   email: 'james.wilson@glazieros.co.uk',   phone: '07700 900001', branch_id: 1, skills: ['window_install', 'door_install'], status: 'active', created_at: now(), updated_at: now() },
-      { id: 2, name: 'Sarah Brown',    email: 'sarah.brown@glazieros.co.uk',    phone: '07700 900002', branch_id: 1, skills: ['window_install'],                status: 'active', created_at: now(), updated_at: now() },
-      { id: 3, name: 'Mike Davies',    email: 'mike.davies@glazieros.co.uk',    phone: '07700 900003', branch_id: 2, skills: ['window_install', 'door_install'], status: 'active', created_at: now(), updated_at: now() },
-      { id: 4, name: 'Emma Thompson',  email: 'emma.thompson@glazieros.co.uk',  phone: '07700 900004', branch_id: 2, skills: ['door_install'],                  status: 'active', created_at: now(), updated_at: now() },
-      { id: 5, name: 'Tom Harris',     email: 'tom.harris@glazieros.co.uk',     phone: '07700 900005', branch_id: 3, skills: ['window_install', 'door_install'], status: 'active', created_at: now(), updated_at: now() },
+      { id: 1, name: 'James Wilson',   email: 'james.wilson@glazieros.co.uk',   phone: '07700 900001', mobile: '07700 900001', branch_id: 1, branch: 'London HQ',   role: 'fitter',     job_title: 'Senior Fitter',   skills: ['window_install', 'door_install'], status: 'active', hourly_rate: 22, salary: 42000, start_date: '2022-03-15', contract_type: 'Full-time', pto_earned: 25, pto_taken: 8,  pto_remaining: 17, sick_days_used: 2, hours_this_week: 38, hours_this_month: 152, created_at: now(), updated_at: now() },
+      { id: 2, name: 'Sarah Brown',    email: 'sarah.brown@glazieros.co.uk',    phone: '07700 900002', mobile: '07700 900002', branch_id: 1, branch: 'London HQ',   role: 'fitter',     job_title: 'Fitter',          skills: ['window_install'],                status: 'active', hourly_rate: 18, salary: 34000, start_date: '2023-01-10', contract_type: 'Full-time', pto_earned: 25, pto_taken: 5,  pto_remaining: 20, sick_days_used: 1, hours_this_week: 40, hours_this_month: 160, created_at: now(), updated_at: now() },
+      { id: 3, name: 'Mike Davies',    email: 'mike.davies@glazieros.co.uk',    phone: '07700 900003', mobile: '07700 900003', branch_id: 2, branch: 'Manchester',  role: 'fitter',     job_title: 'Lead Fitter',     skills: ['window_install', 'door_install'], status: 'active', hourly_rate: 24, salary: 46000, start_date: '2021-06-01', contract_type: 'Full-time', pto_earned: 28, pto_taken: 12, pto_remaining: 16, sick_days_used: 0, hours_this_week: 36, hours_this_month: 144, created_at: now(), updated_at: now() },
+      { id: 4, name: 'Emma Thompson',  email: 'emma.thompson@glazieros.co.uk',  phone: '07700 900004', mobile: '07700 900004', branch_id: 2, branch: 'Manchester',  role: 'surveyor',   job_title: 'Surveyor',        skills: ['door_install'],                  status: 'active', hourly_rate: 20, salary: 38000, start_date: '2023-09-20', contract_type: 'Full-time', pto_earned: 25, pto_taken: 3,  pto_remaining: 22, sick_days_used: 1, hours_this_week: 32, hours_this_month: 128, created_at: now(), updated_at: now() },
+      { id: 5, name: 'Tom Harris',     email: 'tom.harris@glazieros.co.uk',     phone: '07700 900005', mobile: '07700 900005', branch_id: 3, branch: 'Birmingham',  role: 'apprentice', job_title: 'Apprentice Fitter', skills: ['window_install', 'door_install'], status: 'active', hourly_rate: 12, salary: 22000, start_date: '2024-02-01', contract_type: 'Full-time', pto_earned: 25, pto_taken: 2,  pto_remaining: 23, sick_days_used: 0, hours_this_week: 40, hours_this_month: 160, created_at: now(), updated_at: now() },
     ]);
 
     // Jobs (with embedded client data)
@@ -234,18 +234,18 @@
         id: 1,
         pricing: { window: 300, door: 350 },
         form_fields: [
-          { name: 'client_name',  label: 'Client Name',  type: 'text',   required: true  },
-          { name: 'client_email', label: 'Email',        type: 'email',  required: false },
-          { name: 'client_phone', label: 'Phone',        type: 'tel',    required: false },
-          { name: 'address',      label: 'Address',      type: 'text',   required: true  },
-          { name: 'job_type',     label: 'Job Type',     type: 'select', required: true, options: ['window','door'] },
-          { name: 'width',        label: 'Width (m)',    type: 'number', required: true  },
-          { name: 'height',       label: 'Height (m)',   type: 'number', required: true  },
-          { name: 'notes',        label: 'Notes',        type: 'textarea',required: false },
+          { id: 'client_name',  label: 'Client Name',  type: 'text',   required: true  },
+          { id: 'client_email', label: 'Email',        type: 'email',  required: false },
+          { id: 'client_phone', label: 'Phone',        type: 'tel',    required: false },
+          { id: 'address',      label: 'Address',      type: 'text',   required: true  },
+          { id: 'job_type',     label: 'Job Type',     type: 'select', required: true, options: ['window','door'] },
+          { id: 'width',        label: 'Width (m)',    type: 'number', required: true  },
+          { id: 'height',       label: 'Height (m)',   type: 'number', required: true  },
+          { id: 'notes',        label: 'Notes',        type: 'textarea',required: false },
         ],
         pricing_rules: [
-          { id: 1, name: 'Standard Window', type: 'window', base_price: 300, per_sqm: 150 },
-          { id: 2, name: 'Standard Door',   type: 'door',   base_price: 350, per_sqm: 200 },
+          { id: 1, product_type: 'Standard Window', type: 'window', base_price: 300, price_per_sqm: 150 },
+          { id: 2, product_type: 'Standard Door',   type: 'door',   base_price: 350, price_per_sqm: 200 },
         ],
         created_at: now(), updated_at: now(),
       },
@@ -266,16 +266,17 @@
     ]);
 
     // Invoices
+    // Invoices – fields match finance.js expectations (customer_name, total_amount, balance_due)
     write('invoices', [
-      { id: 1, invoice_number: 'INV-0001', job_id: 1, client_name: 'John Smith',  amount: 540, status: 'paid',    issued_date: '2024-11-15', due_date: '2024-11-29', created_at: now(), updated_at: now() },
-      { id: 2, invoice_number: 'INV-0002', job_id: 5, client_name: 'David Taylor', amount: 810, status: 'unpaid', issued_date: '2024-11-20', due_date: '2024-12-04', created_at: now(), updated_at: now() },
+      { id: 1, invoice_number: 'INV-0001', job_id: 1, customer_name: 'John Smith',  client_name: 'John Smith',  amount: 540, total_amount: 540, balance_due: 0,   vat_rate: 20, status: 'paid',   issued_date: '2024-11-15', due_date: '2024-11-29', created_at: now(), updated_at: now() },
+      { id: 2, invoice_number: 'INV-0002', job_id: 5, customer_name: 'David Taylor', client_name: 'David Taylor', amount: 810, total_amount: 810, balance_due: 810, vat_rate: 20, status: 'unpaid', issued_date: '2024-11-20', due_date: '2024-12-04', created_at: now(), updated_at: now() },
     ]);
 
-    // Expenses
+    // Expenses – fields match finance.js expectations (total_amount alias)
     write('expenses', [
-      { id: 1, category: 'Materials',  description: 'uPVC profiles x 20m',     amount: 180.00, date: '2024-11-01', created_at: now(), updated_at: now() },
-      { id: 2, category: 'Travel',     description: 'Fuel – London runs',      amount:  45.50, date: '2024-11-12', created_at: now(), updated_at: now() },
-      { id: 3, category: 'Equipment',  description: 'Glass cutter replacement', amount:  22.99, date: '2024-11-18', created_at: now(), updated_at: now() },
+      { id: 1, category: 'materials',  description: 'uPVC profiles x 20m',     amount: 180.00, total_amount: 180.00, date: '2024-11-01', created_at: now(), updated_at: now() },
+      { id: 2, category: 'fuel',       description: 'Fuel – London runs',      amount:  45.50, total_amount:  45.50, date: '2024-11-12', created_at: now(), updated_at: now() },
+      { id: 3, category: 'tools',      description: 'Glass cutter replacement', amount:  22.99, total_amount:  22.99, date: '2024-11-18', created_at: now(), updated_at: now() },
     ]);
 
     // Diary events
@@ -310,6 +311,7 @@
     }).length;
 
     return {
+      total_jobs:        jobs.length,
       total_leads:       jobs.length,
       total_quotes:      jobs.filter(function (j) { return j.lead_status === 'Quoted'; }).length,
       active_jobs:       jobs.filter(function (j) { return j.install_status === 'In Progress'; }).length,
@@ -326,15 +328,27 @@
   DataStore.prototype._financeAnalytics = function () {
     var invoices = this.getAll('invoices');
     var expenses = this.getAll('expenses');
-    var totalRevenue  = invoices.reduce(function (s, i) { return s + (Number(i.amount) || 0); }, 0);
-    var paidRevenue   = invoices.filter(function (i) { return i.status === 'paid'; }).reduce(function (s, i) { return s + (Number(i.amount) || 0); }, 0);
-    var totalExpenses = expenses.reduce(function (s, e) { return s + (Number(e.amount) || 0); }, 0);
+    var totalRevenue  = invoices.reduce(function (s, i) { return s + (Number(i.total_amount) || Number(i.amount) || 0); }, 0);
+    var paidRevenue   = invoices.filter(function (i) { return i.status === 'paid'; }).reduce(function (s, i) { return s + (Number(i.total_amount) || Number(i.amount) || 0); }, 0);
+    var totalExpenses = expenses.reduce(function (s, e) { return s + (Number(e.total_amount) || Number(e.amount) || 0); }, 0);
+    var netProfit = paidRevenue - totalExpenses;
+    var profitMargin = paidRevenue > 0 ? ((netProfit / paidRevenue) * 100).toFixed(1) : '0.0';
+    var overdueInvoices = invoices.filter(function (i) {
+      return i.status !== 'paid' && new Date(i.due_date) < new Date();
+    }).length;
+
     return {
+      // Fields expected by finance.js renderAnalytics
+      revenue:          totalRevenue,
+      expenses:         totalExpenses,
+      net_profit:       netProfit,
+      profit_margin:    profitMargin,
+      outstanding:      totalRevenue - paidRevenue,
+      overdue_invoices: overdueInvoices,
+      // Legacy aliases
       total_revenue:    totalRevenue,
       paid_revenue:     paidRevenue,
-      outstanding:      totalRevenue - paidRevenue,
       total_expenses:   totalExpenses,
-      net_profit:       paidRevenue - totalExpenses,
       invoice_count:    invoices.length,
       paid_count:       invoices.filter(function (i) { return i.status === 'paid'; }).length,
       unpaid_count:     invoices.filter(function (i) { return i.status === 'unpaid'; }).length,
@@ -412,6 +426,13 @@
       var newJob = ds.create('jobs', Object.assign({ post_status: 'publish', install_status: 'Pending' }, body));
       return Promise.resolve(mockResponse(newJob));
     }
+    // Bulk delete jobs
+    var jobsBulkDelete = p.match(/^\/glazieros\/v1\/jobs\/bulk-delete$/);
+    if (jobsBulkDelete && method === 'POST') {
+      var bulkIds = body.ids || [];
+      bulkIds.forEach(function (id) { ds.delete('jobs', id); });
+      return Promise.resolve(mockResponse({ success: true, deleted: bulkIds.length }));
+    }
     var jobIdMatch = p.match(/^\/glazieros\/v1\/jobs\/(\d+)$/);
     if (jobIdMatch) {
       var jid = jobIdMatch[1];
@@ -444,11 +465,16 @@
       var allInv = ds.getAll('invoices');
       var invNum = 'INV-' + String(allInv.length + 1).padStart(4, '0');
       var job    = ds.getById('jobs', jiid);
+      var invoiceAmount = job ? (Number(job.price) || 0) : 0;
       ds.create('invoices', {
         invoice_number: invNum,
         job_id:         jiid,
-        client_name:    job ? job.client_name : '',
-        amount:         job ? job.price : 0,
+        client_name:    job ? (job.client_name || '') : '',
+        customer_name:  job ? (job.client_name || '') : '',
+        amount:         invoiceAmount,
+        total_amount:   invoiceAmount,
+        balance_due:    invoiceAmount,
+        vat_rate:       20,
         status:         'unpaid',
         issued_date:    new Date().toISOString().slice(0, 10),
         due_date:       new Date(Date.now() + 14 * 86400000).toISOString().slice(0, 10),
@@ -642,6 +668,84 @@
       if (method === 'POST' || method === 'PUT' || method === 'PATCH')
                                return Promise.resolve(mockResponse(ds.update('diary_events', did, body)));
       if (method === 'DELETE') return Promise.resolve(mockResponse({ deleted: ds.delete('diary_events', did) }));
+    }
+
+    // Customers – virtual endpoint; extracts unique customers from jobs
+    if (p === '/glazieros/v1/customers' && method === 'GET') {
+      var allJobs = ds.getAll('jobs');
+      var custMap = {};
+      allJobs.forEach(function (j) {
+        var key = (j.email || j.client_email || j.client_name || '').toLowerCase().trim();
+        if (!key) return;
+        if (!custMap[key]) {
+          custMap[key] = {
+            id: key,
+            first_name: j.first_name || '',
+            last_name: j.last_name || '',
+            client_name: j.client_name || ((j.first_name || '') + ' ' + (j.last_name || '')).trim(),
+            email: j.email || j.client_email || '',
+            phone: j.phone || j.client_phone || '',
+            address: j.address || '',
+            postcode: j.postcode || '',
+            jobs: [],
+            total_spend: 0,
+            last_activity: j.updated_at || j.created_at || '',
+          };
+        }
+        custMap[key].jobs.push(j);
+        custMap[key].total_spend += Number(j.price) || 0;
+        var jDate = j.updated_at || j.created_at || '';
+        if (jDate > custMap[key].last_activity) custMap[key].last_activity = jDate;
+      });
+      return Promise.resolve(mockResponse(Object.values(custMap)));
+    }
+    var custIdMatch = p.match(/^\/glazieros\/v1\/customers\/([^/]+)$/);
+    if (custIdMatch && method === 'GET') {
+      var cKey = decodeURIComponent(custIdMatch[1]).toLowerCase().trim();
+      var cJobs = ds.getAll('jobs').filter(function (j) {
+        return ((j.email || j.client_email || j.client_name || '').toLowerCase().trim()) === cKey;
+      });
+      if (cJobs.length) {
+        var cFirst = cJobs[0];
+        var cSpend = cJobs.reduce(function (s, j) { return s + (Number(j.price) || 0); }, 0);
+        var cLast = cJobs.reduce(function (d, j) { var t = j.updated_at || j.created_at || ''; return t > d ? t : d; }, '');
+        return Promise.resolve(mockResponse({
+          id: cKey,
+          first_name: cFirst.first_name || '',
+          last_name: cFirst.last_name || '',
+          client_name: cFirst.client_name || '',
+          email: cFirst.email || cFirst.client_email || '',
+          phone: cFirst.phone || cFirst.client_phone || '',
+          address: cFirst.address || '',
+          postcode: cFirst.postcode || '',
+          jobs: cJobs,
+          total_spend: cSpend,
+          last_activity: cLast,
+        }));
+      }
+      return Promise.resolve(mockResponse(null, 404));
+    }
+    if (p === '/glazieros/v1/customers' && method === 'POST') {
+      var custJob = ds.create('jobs', Object.assign({
+        post_status: 'draft',
+        lead_status: 'New',
+        install_status: 'Pending',
+        type: 'window',
+        job_type: 'window',
+        price: 0,
+      }, {
+        first_name: body.first_name || '',
+        last_name: body.last_name || '',
+        client_name: ((body.first_name || '') + ' ' + (body.last_name || '')).trim() || body.client_name || '',
+        email: body.email || '',
+        client_email: body.email || '',
+        phone: body.phone || '',
+        client_phone: body.phone || '',
+        address: body.address || '',
+        postcode: body.postcode || '',
+        date: new Date().toISOString(),
+      }));
+      return Promise.resolve(mockResponse(custJob));
     }
 
     // Search — handle both ?term= (dashboard-app.js) and ?q= query params

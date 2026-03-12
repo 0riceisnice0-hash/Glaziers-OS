@@ -402,11 +402,6 @@
         const height = Math.max(durationHours * 80, 60); // Min 60px
         
         return `
-            <div class="gos-day-event-card" 
-                 data-event-id="${event.id}"
-                 data-type="${event.type}"
-                 data-status="${event.status}"
-                 style="
             <div class="gos-day-event-card event-type-${event.type || 'other'} event-status-${event.status || 'scheduled'}" 
                  data-event-id="${event.id}"
                  data-type="${event.type}"
