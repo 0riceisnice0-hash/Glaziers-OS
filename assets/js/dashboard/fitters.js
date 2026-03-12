@@ -7,7 +7,9 @@ jQuery(document).on('gsa:panel:activated', (e, tab) => {
   $panel.data('init', true);
 
   $panel.html('<p>Loading fitters…</p>');
-  fetch('/wp-json/glazieros/v1/fitters')
+  fetch('/wp-json/glazieros/v1/fitters', {
+    headers: { 'X-WP-Nonce': wpApiSettings.nonce }
+  })
     .then(r => r.json())
     .then(fitters => {
       let html = `<table class="gsa-table"><thead><tr>
@@ -52,7 +54,14 @@ jQuery(document).on('gsa:panel:activated', (e, tab) => {
         const url = id ? `/wp-json/glazieros/v1/fitters/${id}` : '/wp-json/glazieros/v1/fitters';
         const method = 'POST'; // POST for both create and update
 
-        fetch(url, { method: method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(d) })
+        fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+                'X-WP-Nonce': wpApiSettings.nonce
+            },
+            body: JSON.stringify(d)
+        })
           .then(r => r.json())
           .then(() => {
             $panel.data('init', false); // Allow re-initialization
@@ -86,7 +95,10 @@ jQuery(document).on('gsa:panel:activated', (e, tab) => {
           if (!confirm('Are you sure you want to delete this fitter?')) return;
           
           const id = this.dataset.id;
-          fetch(`/wp-json/glazieros/v1/fitters/${id}`, { method: 'DELETE' })
+          fetch(`/wp-json/glazieros/v1/fitters/${id}`, {
+              method: 'DELETE',
+              headers: { 'X-WP-Nonce': wpApiSettings.nonce }
+          })
           .then(r => r.json())
           .then(res => {
               if (res.success) {

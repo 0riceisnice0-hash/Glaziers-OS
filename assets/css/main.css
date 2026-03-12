@@ -1,188 +1,480 @@
-/* basic resets */
+/**
+ * ============================================================================
+ * GLAZIEROS - MAIN APPLICATION STYLES (SITE-WIDE)
+ * ============================================================================
+ * Modern, full-width, borderless design system
+ * Version: 2.0.1
+ * Updated: 2025-10-26 23:45:00 UTC
+ * Cache Bust: Fresh cyan/teal palette
+ */
+
+/* ============================================================================
+   DESIGN TOKENS - GLOBAL VARIABLES
+   ============================================================================ */
+
+:root {
+    /* Brand Colors - Fresh & Vibrant */
+    --gos-brand-primary: #06b6d4;      /* Cyan/Teal - Primary accent */
+    --gos-brand-primary-hover: #0891b2;
+    --gos-brand-primary-light: #cffafe;
+    
+    --gos-brand-secondary: #8b5cf6;    /* Purple - Secondary accent */
+    --gos-brand-secondary-hover: #7c3aed;
+    --gos-brand-secondary-light: #ede9fe;
+    
+    --gos-success: #10b981;
+    --gos-warning: #f59e0b;
+    --gos-danger: #ef4444;
+    --gos-info: #3b82f6;
+    
+    /* Neutrals - Modern Grays */
+    --gos-gray-50: #f9fafb;
+    --gos-gray-100: #f3f4f6;
+    --gos-gray-200: #e5e7eb;
+    --gos-gray-300: #d1d5db;
+    --gos-gray-400: #9ca3af;
+    --gos-gray-500: #6b7280;
+    --gos-gray-600: #4b5563;
+    --gos-gray-700: #374151;
+    --gos-gray-800: #1f2937;
+    --gos-gray-900: #111827;
+    
+    /* Spacing */
+    --gos-space-1: 0.25rem;
+    --gos-space-2: 0.5rem;
+    --gos-space-3: 0.75rem;
+    --gos-space-4: 1rem;
+    --gos-space-5: 1.25rem;
+    --gos-space-6: 1.5rem;
+    --gos-space-8: 2rem;
+    --gos-space-10: 2.5rem;
+    --gos-space-12: 3rem;
+    
+    /* Typography */
+    --gos-font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --gos-font-mono: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+    
+    /* Border Radius */
+    --gos-radius-sm: 0.375rem;
+    --gos-radius-md: 0.5rem;
+    --gos-radius-lg: 0.75rem;
+    --gos-radius-xl: 1rem;
+    --gos-radius-pill: 624px;
+    
+    /* Shadows - Subtle */
+    --gos-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --gos-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --gos-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    
+    /* Transitions */
+    --gos-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --gos-transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    --gos-transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Layout */
+    --gos-topbar-height: 56px;
+    --gos-sidebar-width: 240px;
+}
+
+/* ============================================================================
+   GLOBAL RESETS - CLEAN SLATE
+   ============================================================================ */
+
 #glazieros-pricing-tool,
 #gos-dashboard-app,
 #gos-quote-detail,
 #gsa-diary {
-  padding: 1em;
-  box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: var(--gos-font-sans);
 }
 
-/* Fullscreen mode for the standalone pricing tool page */
-body.gos-pricing-tool-active {
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-}
-body.gos-pricing-tool-active #glazieros-pricing-tool {
-  height: 100vh;
-  padding: 0;
+*, *::before, *::after {
+    box-sizing: border-box;
 }
 
-/* alternating rows for any table */
-.gsa-table tr:nth-child(even) {
-  background: #fafafa;
-}
+/* ============================================================================
+   DASHBOARD CONTAINER - FULL WIDTH, NO BOXING
+   ============================================================================ */
 
-/* Dashboard container */
 #gos-dashboard-app {
-  font-family: sans-serif;
-  background: #f7f8f9;
-  padding: 1rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  height: 100%;
-  box-sizing: border-box;
-  position: relative;
+    width: 100%;
+    height: 100vh;
+    background: var(--gos-gray-50);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    padding: 0;
+    margin: 0;
 }
 
-/* Tabs */
+/* ============================================================================
+   TABS - MODERN DESIGN
+   ============================================================================ */
+
 #gsa-tabs {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3rem;
-  background: #f7f8f9;
-  z-index: 1000;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    gap: 0;
+    height: var(--gos-topbar-height);
+    background: white;
+    border-bottom: 1px solid var(--gos-gray-200);
+    padding: 0 var(--gos-space-6);
+    align-items: center;
+    position: relative;
+    z-index: 1000;
+    flex-shrink: 0;
 }
+
 .gsa-tab {
-  padding: 0.5rem 1rem;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-bottom: none;
-  cursor: pointer;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    padding: var(--gos-space-4) var(--gos-space-6);
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--gos-gray-600);
+    transition: all var(--gos-transition-fast);
+    position: relative;
+    height: var(--gos-topbar-height);
+    display: flex;
+    align-items: center;
 }
+
+.gsa-tab:hover {
+    color: var(--gos-gray-900);
+    background: var(--gos-gray-50);
+}
+
 .gsa-tab.active {
-  background: #fff;
-  font-weight: bold;
-  border-bottom: 1px solid #fff;
+    color: var(--gos-brand-primary);
+    border-bottom-color: var(--gos-brand-primary);
+    background: transparent;
+    font-weight: 600;
 }
 
-/* Panels */
+/* ============================================================================
+   PANELS - FULL WIDTH, NO BORDERS OR PADDING
+   ============================================================================ */
+
 .gsa-panel {
-  display: none;
-  background: #fff;
-  padding: 1rem;
-  border: 1px solid #ddd;
-  position: absolute;
-  top: 3rem;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  overflow: auto;
+    display: none;
+    background: var(--gos-gray-50);
+    width: 100%;
+    height: calc(100vh - var(--gos-topbar-height));
+    overflow: auto;
+    position: relative;
+    padding: 0;
+    margin: 0;
+    border: none;
 }
+
 .gsa-panel.active {
-  display: block;
+    display: flex;
+    flex-direction: column;
 }
 
-/* Fullscreen wrapper for dashboard */
+/* Remove all inner container boxing */
+.gsa-panel > * {
+    width: 100%;
+}
+
+/* ============================================================================
+   FULLSCREEN MODE
+   ============================================================================ */
+
 #gos-dashboard-wrapper {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: #fff;
-  z-index: 9999;
-  overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: white;
+    z-index: 9999;
+    overflow: hidden;
 }
 
-/* Hide everything except dashboard when fullscreen */
 body.gos-dashboard-fullscreen > *:not(#gos-dashboard-wrapper) {
-  display: none !important;
+    display: none !important;
 }
 
-/* Utilities */
-.gos-center {
-  text-align: center;
+/* Fullscreen mode for pricing tool */
+body.gos-pricing-tool-active {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
 }
+
+body.gos-pricing-tool-active #glazieros-pricing-tool {
+    height: 100vh;
+    padding: 0;
+}
+
+/* ============================================================================
+   TABLES - MODERN DESIGN
+   ============================================================================ */
+
+.gsa-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+.gsa-table thead {
+    background: var(--gos-gray-50);
+    border-bottom: 2px solid var(--gos-gray-200);
+}
+
+.gsa-table th {
+    padding: var(--gos-space-3) var(--gos-space-4);
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--gos-gray-700);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.gsa-table tbody tr {
+    border-bottom: 1px solid var(--gos-gray-200);
+    transition: background var(--gos-transition-fast);
+}
+
+.gsa-table tbody tr:nth-child(even) {
+    background: var(--gos-gray-50);
+}
+
+.gsa-table tbody tr:hover {
+    background: var(--gos-brand-primary-light);
+}
+
+.gsa-table td {
+    padding: var(--gos-space-3) var(--gos-space-4);
+    font-size: 0.875rem;
+    color: var(--gos-gray-900);
+}
+
+/* ============================================================================
+   BUTTONS - MODERN DESIGN
+   ============================================================================ */
+
 .gos-button {
-  margin: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  background: #2eac66;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--gos-space-2);
+    padding: var(--gos-space-3) var(--gos-space-6);
+    background: var(--gos-brand-primary);
+    color: white;
+    border: none;
+    border-radius: var(--gos-radius-md);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--gos-transition-fast);
+    box-shadow: var(--gos-shadow-sm);
+    font-family: var(--gos-font-sans);
 }
+
+.gos-button:hover {
+    background: var(--gos-brand-primary-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--gos-shadow-md);
+}
+
+.gos-button:active {
+    transform: translateY(0);
+}
+
+.gos-button-secondary {
+    background: white;
+    color: var(--gos-gray-700);
+    border: 1px solid var(--gos-gray-300);
+}
+
+.gos-button-secondary:hover {
+    background: var(--gos-gray-50);
+    border-color: var(--gos-gray-400);
+    transform: translateY(-1px);
+}
+
+/* ============================================================================
+   FORM INPUTS - MODERN DESIGN
+   ============================================================================ */
+
 .gos-input {
-  width: 100%;
-  padding: 0.5rem;
-  margin: 0.25rem 0;
-  box-sizing: border-box;
+    width: 100%;
+    padding: var(--gos-space-3);
+    border: 1px solid var(--gos-gray-300);
+    border-radius: var(--gos-radius-md);
+    font-size: 0.9375rem;
+    font-family: var(--gos-font-sans);
+    color: var(--gos-gray-900);
+    transition: all var(--gos-transition-fast);
 }
+
+.gos-input:focus {
+    outline: none;
+    border-color: var(--gos-brand-primary);
+    box-shadow: 0 0 0 3px var(--gos-brand-primary-light);
+}
+
+.gos-input::placeholder {
+    color: var(--gos-gray-400);
+}
+
 .gos-form-field {
-  margin-bottom: 1rem;
-  text-align: left;
+    margin-bottom: var(--gos-space-4);
 }
+
+.gos-form-field label {
+    display: block;
+    margin-bottom: var(--gos-space-2);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--gos-gray-700);
+}
+
 .gos-form-field-checkbox {
-  margin-top: 1rem;
+    margin-top: var(--gos-space-4);
 }
+
 .gos-form-field-checkbox label {
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
+    gap: var(--gos-space-2);
+    cursor: pointer;
 }
+
 .gos-form-field-checkbox input[type="checkbox"] {
-  width: auto;
-  margin-right: 0.5rem;
+    width: auto;
+    margin: 0;
+    cursor: pointer;
 }
+
+/* ============================================================================
+   ERROR STATES
+   ============================================================================ */
+
 .gos-error {
-  color: red;
-  text-align: center;
-  padding: 2rem;
+    color: var(--gos-danger);
+    background: #fee2e2;
+    padding: var(--gos-space-4);
+    border-radius: var(--gos-radius-md);
+    text-align: center;
+    font-size: 0.875rem;
 }
 
-/* Wizard layout and 3D viewer */
+/* ============================================================================
+   UTILITIES
+   ============================================================================ */
+
+.gos-center {
+    text-align: center;
+}
+
+.gos-hidden {
+    display: none !important;
+}
+
+.gos-mt-4 {
+    margin-top: var(--gos-space-4);
+}
+
+.gos-mb-4 {
+    margin-bottom: var(--gos-space-4);
+}
+
+.gos-p-4 {
+    padding: var(--gos-space-4);
+}
+
+/* ============================================================================
+   PRICING TOOL SPECIFIC
+   ============================================================================ */
+
 #glazieros-pricing-tool {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  background-color: #f0f2f5;
-}
-.gos-wizard-step-container {
-  display: flex;
-  flex-grow: 1;
-  overflow: hidden;
-}
-.gos-controls-panel {
-  flex: 1;
-  min-width: 350px;
-  max-width: 500px;
-  padding: 2rem;
-  background-color: #fff;
-  overflow-y: auto;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
-  z-index: 10;
-}
-.gos-viewer-panel {
-  flex: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
-#gos-3d-placeholder {
-  width: 100%;
-  height: 100%;
-}
-/* Step 1 centering */
-.gos-step1-container {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: var(--gos-gray-50);
 }
 
-/* Fullscreen mode for specific dashboard panels */
-.gsa-main-layout.gsa-fullscreen-panel .gsa-sidebar {
-  display: none;
+.gos-wizard-step-container {
+    display: flex;
+    flex-grow: 1;
+    overflow: hidden;
 }
-.gsa-main-layout.gsa-fullscreen-panel .gsa-content {
-  left: 0;
+
+.gos-controls-panel {
+    flex: 1;
+    min-width: 350px;
+    max-width: 500px;
+    padding: var(--gos-space-8);
+    background-color: white;
+    overflow-y: auto;
+    box-shadow: var(--gos-shadow-lg);
+    z-index: 10;
 }
+
+.gos-viewer-panel {
+    flex: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+#gos-3d-placeholder {
+    width: 100%;
+    height: 100%;
+}
+
+.gos-step1-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================ */
+
+@media (max-width: 768px) {
+    #gsa-tabs {
+        padding: 0 var(--gos-space-4);
+    }
+    
+    .gsa-tab {
+        padding: var(--gos-space-3) var(--gos-space-4);
+        font-size: 0.875rem;
+    }
+    
+    .gos-wizard-step-container {
+        flex-direction: column;
+    }
+    
+    .gos-controls-panel {
+        max-width: 100%;
+        min-width: 100%;
+    }
+}
+
+/* ============================================================================
+   PRINT STYLES
+   ============================================================================ */
+
+@media print {
+    #gsa-tabs {
+        display: none;
+    }
+    
+    .gsa-panel {
+        overflow: visible;
+        height: auto;
+    }
+}
+

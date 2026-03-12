@@ -1,0 +1,81 @@
+console.log('⚙️ invoices.js loaded');
+
+jQuery(function($) {
+    const $panel = $('#gsa-invoices');
+
+    function renderInvoices(jobs) {
+        const invoicedJobs = jobs.filter(job => job.invoice_number);
+
+        if (invoicedJobs.length === 0) {
+            $panel.find('#gsa-invoices-list').html('<tr><td colspan="5" class="gsa-no-data-message">No invoices have been generated yet.</td></tr>');
+            return;
+        }
+
+        const rows = invoicedJobs.map(job => `
+            <tr>
+                <td>${job.invoice_number}</td>
+                <td>#${job.id}</td>
+                <td>${job.first_name || ''} ${job.last_name || ''}</td>
+                <td>£${parseFloat(job.price).toFixed(2)}</td>
+                <td>
+                    <a href="${job.invoice_url}" target="_blank" class="gos-button gos-button-sm">Download PDF</a>
+                </td>
+            </tr>
+        `).join('');
+
+        $panel.find('#gsa-invoices-list').html(rows);
+    }
+
+    function loadInvoices() {
+        $panel.find('#gsa-invoices-list').html('<tr><td colspan="5" class="gsa-no-data-message">Loading...</td></tr>');
+
+        // Fetch all jobs to find the ones with invoices
+        fetch('/wp-json/glazieros/v1/jobs?per_page=-1', {
+            headers: { 'X-WP-Nonce': wpApiSettings.nonce }
+        })
+            .then(res => res.json())
+            .then(renderInvoices)
+            .catch(err => {
+                console.error('Failed to load invoices:', err);
+                $panel.find('#gsa-invoices-list').html('<tr><td colspan="5" class="gos-error">Failed to load invoices.</td></tr>');
+            });
+    }
+
+    function setupPanel() {
+        $panel.html(`
+            <div class="gsa-invoices-header">
+                <h2 class="gsa-panel-title">Invoices</h2>
+            </div>
+            <div class="gsa-table-container">
+                <table class="gsa-table">
+                    <thead>
+                        <tr>
+                            <th>Invoice #</th>
+                            <th>Job ID</th>
+                            <th>Customer</th>
+                            <th>Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gsa-invoices-list"></tbody>
+                </table>
+            </div>
+        `);
+    }
+
+    $(document).on('gsa:panel:activated', (e, tab) => {
+        if (tab !== 'invoices') return;
+
+        if (!$panel.data('init')) {
+            $panel.data('init', true);
+            setupPanel();
+        }
+        loadInvoices();
+    });
+
+    $(document).on('gsa:data:updated', (e, type, id) => {
+        if (type === 'invoice' && $panel.is(':visible')) {
+            loadInvoices();
+        }
+    });
+});

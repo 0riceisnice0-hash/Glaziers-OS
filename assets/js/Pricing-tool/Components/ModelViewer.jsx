@@ -1,42 +1,60 @@
 // js/pricing-tool/components/ModelViewer.jsx
-import React, { Suspense } from 'react';
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Stage, useGLTF } from '@react-three/drei';
+import React, { Suspense, useRef, useEffect } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { OrbitControls, Stage } from '@react-three/drei';
+import * as THREE from 'three';
 
-/**
- * A component that loads and displays your 3D model.
- * You should replace the placeholder GLB file with your own model.
- * @param {string} color - The current color selected for the model.
- */
-function Model({ color, materialKey, ...props }) {
-    // Replace with the path to your model
-    const { scene } = useGLTF('/your-model.glb');
+function Model({ productType, color, materialKey }) {
+    const ref = useRef();
 
-    // This is a simple implementation. For complex models, you might need to
-    // traverse the scene graph to apply materials to specific meshes.
-    scene.traverse((child) => {
-        if (child.isMesh) {
-            // You can create different material effects here based on `materialKey`
-            if (materialKey === 'metal') {
-                child.material.metalness = 0.8;
-                child.material.roughness = 0.2;
-            } else {
-                child.material.metalness = 0.1;
-                child.material.roughness = 0.8;
+    useEffect(() => {
+        const scene = ref.current;
+        if (scene) {
+            // Clear previous model
+            while (scene.children.length > 0) {
+                scene.remove(scene.children[0]);
             }
-            child.material.color.set(color);
+
+            let mesh;
+            const builders = window.GOSBuilders || {};
+            const builder = productType === 'door' ? builders.testdoor : builders.testwindow;
+
+            if (builder) {
+                mesh = builder({
+                    width: 1,
+                    height: 1.5,
+                    frameDepth: 0.1,
+                    frameThk: 0.05,
+                    frameColor: new THREE.Color(color).getHex()
+                });
+            } else {
+                // Placeholder for conservatory or if builder is not found
+                const geometry = new THREE.BoxGeometry(1, 1.5, 1);
+                const material = new THREE.MeshStandardMaterial({ color: new THREE.Color(color) });
+                mesh = new THREE.Mesh(geometry, material);
+            }
+            
+            if (mesh) {
+                scene.add(mesh);
+            }
+        }
+    }, [productType, color, materialKey]);
+
+    useFrame(() => {
+        if (ref.current) {
+            ref.current.rotation.y += 0.005;
         }
     });
 
-    return <primitive object={scene} {...props} />;
+    return <group ref={ref} />;
 }
 
-export default function ModelViewer({ color, materialKey }) {
+export default function ModelViewer({ color, materialKey, productType }) {
     return (
         <Canvas dpr={[1, 2]} camera={{ fov: 45 }} style={{ position: "absolute" }}>
             <Suspense fallback={null}>
                 <Stage environment="city" intensity={0.6}>
-                    <Model color={color} materialKey={materialKey} />
+                    <Model color={color} materialKey={materialKey} productType={productType} />
                 </Stage>
             </Suspense>
             <OrbitControls makeDefault autoRotate />

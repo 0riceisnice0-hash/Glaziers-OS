@@ -17,18 +17,31 @@ jQuery(document).on('gsa:panel:activated', (e, tab) => {
   // Helper to escape HTML to prevent XSS when setting input values
   const escapeHTML = str => String(str || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'})[m]);
 
-  Promise.all([
-    fetch(`/wp-json/glazieros/v1/jobs/${id}`),
-    fetch('/wp-json/glazieros/v1/settings/statuses')
-  ]).then(async ([jobRes, statusesRes]) => {
+  // Hardcoded statuses, removing the need for a settings API call.
+  const statusSettings = {
+      lead: [
+          { label: 'New', color: '#3498db' },
+          { label: 'Quoted', color: '#f1c40f' },
+          { label: 'Follow-up', color: '#e67e22' },
+          { label: 'Won', color: '#2ecc71' },
+          { label: 'Lost', color: '#e74c3c' }
+      ],
+      install: [
+          { label: 'Pending', color: '#95a5a6' },
+          { label: 'Scheduled', color: '#8e44ad' },
+          { label: 'In Progress', color: '#3498db' },
+          { label: 'Completed', color: '#27ae60' }
+      ]
+  };
+
+  fetch(`/wp-json/glazieros/v1/jobs/${id}`)
+    .then(async (jobRes) => {
       if (!jobRes.ok) {
         const err = await jobRes.json();
         throw new Error(err.message || 'Quote not found.');
       }
-      if (!statusesRes.ok) throw new Error('Could not load status settings.');
 
       const job = await jobRes.json();
-      const statusSettings = await statusesRes.json();
 
       const leadStatusOptions = (statusSettings.lead || []).map(s => 
         `<option value="${s.label}" ${job.lead_status === s.label ? 'selected' : ''}>${s.label}</option>`
@@ -36,6 +49,18 @@ jQuery(document).on('gsa:panel:activated', (e, tab) => {
       const installStatusOptions = (statusSettings.install || []).map(s => 
         `<option value="${s.label}" ${job.install_status === s.label ? 'selected' : ''}>${s.label}</option>`
       ).join('');
+
+      let invoiceButtonHtml = '';
+      if (job.invoice_url) {
+        invoiceButtonHtml = `<a href="${job.invoice_url}" target="_blank" class="gos-button gos-button-secondary">Download Invoice (${job.invoice_number})</a>`;
+      } else if (job.lead_status === 'Won') {
+        invoiceButtonHtml = `<button id="gsa-generate-invoice-btn" class="gos-button gos-button-secondary">Generate Invoice</button>`;
+      }
+
+      let convertButtonHtml = '';
+      if (job.post_status === 'draft') {
+        convertButtonHtml = `<button id="gsa-convert-to-job-btn" class="gos-button">Convert to Job</button>`;
+      }
 
       // Render editable form
       $panel.html(`
@@ -75,6 +100,8 @@ jQuery(document).on('gsa:panel:activated', (e, tab) => {
                     </div>
                     <div class="gsa-form-actions">
                         <button type="submit" class="gos-button">Save Changes</button>
+                        ${convertButtonHtml}
+                        ${invoiceButtonHtml}
                     </div>
                 </form>
             </div>
@@ -96,7 +123,7 @@ jQuery(document).on('gsa:panel:activated', (e, tab) => {
         #gsa-quote-detail-form .gsa-form-section { margin-bottom: 2rem; }
         #gsa-quote-detail-form h3 { font-size: 1.2rem; margin-bottom: 1rem; border-bottom: 1px solid #eee; padding-bottom: 0.5rem; }
         #gsa-quote-detail-form .gsa-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1rem; }
-        #gsa-quote-detail-form label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #555; }
+        #gsa-quote-detail-form label { display: block; font-weight: 500; color: #555; }
         #gsa-quote-detail-form .gos-input { width: 100%; padding: 0.6rem; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
         #gsa-quote-detail-form .gsa-form-actions { text-align: right; }
         #gsa-detail-lead-status-select, #gsa-detail-install-status-select { font-weight: bold; text-transform: capitalize; }
@@ -160,6 +187,8 @@ jQuery(document).on('gsa:panel:activated', (e, tab) => {
             const $feedback = jQuery('#gsa-detail-feedback');
             $feedback.text('✅ Changes Saved!').addClass('visible');
             setTimeout(() => $feedback.removeClass('visible'), 3000);
+            // Notify other panels (like quotes) that data has changed
+            jQuery(document).trigger('gsa:data:updated', ['quote', res.job_id]);
           } else {
             throw new Error('Save was not successful.');
           }
@@ -169,6 +198,65 @@ jQuery(document).on('gsa:panel:activated', (e, tab) => {
         })
         .finally(() => {
           $button.prop('disabled', false).text(originalButtonText);
+        });
+      });
+
+      // --- Invoice Generation ---
+      jQuery('#gsa-generate-invoice-btn').on('click', function(e) {
+        e.preventDefault();
+        const $btn = jQuery(this);
+        if (!confirm('This will generate a final invoice for this job. Continue?')) return;
+
+        $btn.prop('disabled', true).text('Generating...');
+
+        fetch(`/wp-json/glazieros/v1/jobs/${id}/invoice`, {
+          method: 'POST'
+        })
+        .then(res => {
+          if (!res.ok) throw new Error('Invoice generation failed.');
+          return res.json();
+        })
+        .then(data => {
+          if (data.success) {
+            // Replace button with a download link
+            $btn.replaceWith(`<a href="${data.invoice_url}" target="_blank" class="gos-button gos-button-secondary">Download Invoice (${data.invoice_number})</a>`);
+            jQuery(document).trigger('gsa:data:updated', ['invoice', id]);
+          } else {
+            throw new Error(data.message || 'An unknown error occurred.');
+          }
+        })
+        .catch(err => {
+          alert('Error: ' + err.message);
+          $btn.prop('disabled', false).text('Generate Invoice');
+        });
+      });
+
+      // --- Convert to Job ---
+      jQuery('#gsa-convert-to-job-btn').on('click', function(e) {
+        e.preventDefault();
+        const $btn = jQuery(this);
+        if (!confirm('Are you sure you want to convert this quote to a job?')) return;
+
+        $btn.prop('disabled', true).text('Converting...');
+
+        fetch(`/wp-json/glazieros/v1/quotes/${id}/convert`, {
+          method: 'POST'
+        })
+        .then(res => {
+          if (!res.ok) throw new Error('Conversion failed.');
+          return res.json();
+        })
+        .then(data => {
+          if (data.success) {
+            // Reload the panel to show the updated status
+            jQuery(document).trigger('gsa:panel:activated', ['quote-detail']);
+          } else {
+            throw new Error(data.message || 'An unknown error occurred.');
+          }
+        })
+        .catch(err => {
+          alert('Error: ' + err.message);
+          $btn.prop('disabled', false).text('Convert to Job');
         });
       });
 

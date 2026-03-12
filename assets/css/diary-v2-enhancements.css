@@ -1,0 +1,723 @@
+/**
+ * GlazierOS Diary System v2.0.0 - UI/UX Enhancement Layer
+ * 
+ * This file contains visual improvements that layer on top of diary-v2.css
+ * Apple Calendar meets Notion aesthetic - Modern, clean, beautiful
+ * 
+ * Load this AFTER diary-v2.css
+ * 
+ * @package GlazierOS
+ * @version 2.0.0
+ */
+
+/* Force the improved design system variables to override */
+:root {
+    /* Enhanced shadows with more depth */
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px 0 rgba(0, 0, 0, 0.04) !important;
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04) !important;
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04) !important;
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.02) !important;
+}
+
+/* ==================================================
+   MONTH VIEW - Apple Calendar Style
+   ================================================== */
+
+.gos-month-view {
+    box-shadow: var(--shadow-lg);
+    border-radius: 16px;
+    overflow: hidden;
+    background: white;
+}
+
+.gos-month-header {
+    background: linear-gradient(180deg, #fafbfc 0%, #f3f4f6 100%);
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.gos-month-header-day {
+    padding: 16px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #6b7280;
+    letter-spacing: 0.08em;
+}
+
+.gos-month-grid {
+    min-height: 700px;
+}
+
+.gos-month-day {
+    border-right: 1px solid #f0f1f3;
+    border-bottom: 1px solid #f0f1f3;
+    padding: 12px;
+    min-height: 120px;
+    transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gos-month-day:hover {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.03) 100%);
+    transform: scale(1.02);
+    z-index: 10;
+    box-shadow: inset 0 0 0 1px rgba(102, 126, 234, 0.2);
+}
+
+.gos-month-day.today {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+    position: relative;
+}
+
+.gos-month-day.today::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+}
+
+.gos-month-day.today .gos-month-day-number {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.gos-month-day.other-month {
+    background: #fafbfc;
+    opacity: 0.6;
+}
+
+.gos-month-day.weekend {
+    background: linear-gradient(180deg, #fafbfc 0%, #f9fafb 100%);
+}
+
+.gos-month-day-number {
+    font-size: 15px;
+    font-weight: 600;
+    color: #111827;
+    padding: 6px 10px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    display: inline-block;
+    transition: all 250ms;
+}
+
+.gos-month-event {
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    transition: all 250ms;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-bottom: 4px;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.gos-month-event:hover {
+    transform: translateX(4px) translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.gos-month-more {
+    font-size: 11px;
+    color: #667eea;
+    font-weight: 600;
+    padding: 4px 10px;
+    cursor: pointer;
+    border-radius: 6px;
+    display: inline-block;
+    transition: all 250ms;
+}
+
+.gos-month-more:hover {
+    background: rgba(102, 126, 234, 0.1);
+    color: #5a67d8;
+}
+
+/* ==================================================
+   WEEK VIEW - Improved Fitter Grid
+   ================================================== */
+
+.gos-week-view {
+    box-shadow: var(--shadow-lg);
+    border-radius: 16px;
+    overflow: hidden;
+    background: white;
+}
+
+.gos-week-header {
+    background: linear-gradient(180deg, #fafbfc 0%, #f3f4f6 100%);
+    border-bottom: 2px solid #e5e7eb;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.gos-week-header-cell {
+    padding: 16px;
+    border-right: 1px solid #f0f1f3;
+}
+
+.gos-week-day-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #374151;
+    letter-spacing: -0.01em;
+    margin-bottom: 4px;
+}
+
+.gos-week-day-date {
+    font-size: 11px;
+    color: #9ca3af;
+    font-weight: 500;
+}
+
+.gos-week-fitter-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 4px;
+}
+
+.gos-week-fitter-info {
+    font-size: 11px;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.gos-week-fitter-info::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #10b981;
+}
+
+.gos-week-cell {
+    border-right: 1px solid #f0f1f3;
+    border-bottom: 1px solid #f0f1f3;
+    padding: 12px;
+    min-height: 100px;
+    transition: background 250ms;
+}
+
+.gos-week-cell:hover {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.03) 100%);
+}
+
+.gos-week-cell.today {
+    background: rgba(102, 126, 234, 0.05);
+    box-shadow: inset 0 0 0 2px rgba(102, 126, 234, 0.1);
+}
+
+.gos-week-event {
+    padding: 12px;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    margin-bottom: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.gos-week-event::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 10px 0 0 10px;
+}
+
+.gos-week-event:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+}
+
+.gos-week-event-type {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+    opacity: 0.9;
+}
+
+.gos-week-event-time {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.gos-week-event-customer {
+    font-size: 12px;
+    opacity: 0.9;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.gos-week-event-status {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 9px;
+    padding: 4px 8px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* ==================================================
+   DAY VIEW - Hourly Grid Enhancement
+   ================================================== */
+
+.gos-day-view {
+    box-shadow: var(--shadow-lg);
+    border-radius: 16px;
+    overflow: hidden;
+    background: white;
+}
+
+.gos-day-header {
+    background: linear-gradient(180deg, #fafbfc 0%, #f3f4f6 100%);
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.gos-day-header-cell {
+    padding: 16px;
+    border-right: 1px solid #f0f1f3;
+}
+
+.gos-day-fitter-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.gos-day-time-slot {
+    border-right: 1px solid #f0f1f3;
+    border-bottom: 1px solid #f0f1f3;
+    padding: 8px 12px;
+    font-size: 11px;
+    color: #9ca3af;
+    background: #fafbfc;
+    text-align: right;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.gos-day-cell {
+    border-right: 1px solid #f0f1f3;
+    border-bottom: 1px solid #f0f1f3;
+    min-height: 60px;
+    cursor: pointer;
+    transition: background 250ms;
+    position: relative;
+}
+
+.gos-day-cell:hover {
+    background: rgba(102, 126, 234, 0.03);
+}
+
+.gos-day-event {
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    color: white;
+    cursor: move;
+    transition: all 250ms;
+    overflow: hidden;
+    z-index: 1;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.gos-day-event:hover {
+    z-index: 100;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05);
+}
+
+.gos-day-event.dragging {
+    opacity: 0.7;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+}
+
+.gos-day-event-type {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+    opacity: 0.9;
+}
+
+.gos-day-event-customer {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.gos-day-event-resize {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.4);
+    cursor: ns-resize;
+    opacity: 0;
+    transition: opacity 250ms;
+    border-radius: 0 0 6px 6px;
+}
+
+.gos-day-event:hover .gos-day-event-resize {
+    opacity: 1;
+}
+
+/* ==================================================
+   EMPTY STATES - Beautiful & Encouraging
+   ================================================== */
+
+.gos-empty-state,
+.gos-loading-state,
+.gos-error-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 64px 32px;
+    text-align: center;
+    min-height: 500px;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.03) 100%);
+    border-radius: 16px;
+    border: 2px dashed #e5e7eb;
+}
+
+.gos-state-icon {
+    font-size: 80px;
+    margin-bottom: 24px;
+    opacity: 0.3;
+    filter: grayscale(1);
+}
+
+.gos-state-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+}
+
+.gos-state-message {
+    font-size: 15px;
+    color: #6b7280;
+    max-width: 480px;
+    line-height: 1.6;
+    margin-bottom: 32px;
+}
+
+.gos-loading-spinner {
+    width: 56px;
+    height: 56px;
+    border: 5px solid #e5e7eb;
+    border-top-color: #667eea;
+    border-radius: 50%;
+    animation: spin 800ms linear infinite;
+    margin-bottom: 32px;
+}
+
+/* ==================================================
+   BUTTONS - Modern & Tactile
+   ================================================== */
+
+.gos-btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    line-height: 1.5;
+    letter-spacing: -0.01em;
+}
+
+.gos-btn:active {
+    transform: scale(0.97);
+}
+
+.gos-btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.gos-btn-primary:hover:not(:disabled) {
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+    transform: translateY(-2px);
+}
+
+.gos-btn-secondary {
+    background: white;
+    color: #374151;
+    border: 2px solid #e5e7eb;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.gos-btn-secondary:hover:not(:disabled) {
+    background: #f9fafb;
+    border-color: #d1d5db;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+.gos-btn-sm {
+    padding: 8px 16px;
+    font-size: 13px;
+}
+
+.gos-btn-lg {
+    padding: 16px 32px;
+    font-size: 16px;
+}
+
+.gos-btn-icon {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+}
+
+/* ==================================================
+   MODAL - Glassmorphism & Smooth Animations
+   ================================================== */
+
+.gos-modal-backdrop {
+    background: rgba(17, 24, 39, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    animation: fadeIn 250ms;
+}
+
+.gos-modal {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    animation: slideUp 350ms cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.gos-modal-header {
+    padding: 24px 32px;
+    border-bottom: 1px solid #f0f1f3;
+}
+
+.gos-modal-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111827;
+    letter-spacing: -0.02em;
+}
+
+.gos-modal-close {
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: #f3f4f6;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 250ms;
+    font-size: 18px;
+    color: #6b7280;
+}
+
+.gos-modal-close:hover {
+    background: #e5e7eb;
+    color: #374151;
+    transform: rotate(90deg);
+}
+
+.gos-modal-body {
+    padding: 32px;
+    max-height: calc(90vh - 200px);
+    overflow-y: auto;
+}
+
+.gos-modal-footer {
+    padding: 24px 32px;
+    border-top: 1px solid #f0f1f3;
+    background: #fafbfc;
+}
+
+/* ==================================================
+   NOTIFICATIONS - Modern Toast System
+   ================================================== */
+
+#gos-diary-notifications {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 400px;
+}
+
+.gos-notification {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 16px 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    animation: slideInRight 350ms cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.gos-notification::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+}
+
+.gos-notification.success::before {
+    background: #10b981;
+}
+
+.gos-notification.error::before {
+    background: #ef4444;
+}
+
+.gos-notification.warning::before {
+    background: #f59e0b;
+}
+
+.gos-notification.info::before {
+    background: #3b82f6;
+}
+
+.gos-notification-content {
+    padding-left: 16px;
+}
+
+.gos-notification-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 4px;
+}
+
+.gos-notification-message {
+    font-size: 13px;
+    color: #6b7280;
+    line-height: 1.5;
+}
+
+/* ==================================================
+   RESPONSIVE DESIGN
+   ================================================== */
+
+@media (max-width: 1400px) {
+    .gos-diary-main {
+        grid-template-columns: 1fr;
+    }
+    
+    .gos-diary-sidebar,
+    .gos-diary-right-panel {
+        position: static;
+    }
+}
+
+@media (max-width: 768px) {
+    .gos-diary-header-content,
+    .gos-diary-toolbar-content {
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .gos-diary-view-switcher button {
+        font-size: 11px;
+        padding: 8px 12px;
+    }
+    
+    .gos-month-grid {
+        min-height: 500px;
+    }
+    
+    .gos-month-day {
+        min-height: 80px;
+        padding: 8px;
+    }
+}
+
+/* ==================================================
+   ANIMATIONS
+   ================================================== */
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}

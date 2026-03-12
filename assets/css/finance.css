@@ -1,0 +1,945 @@
+/**
+ * GlazierOS Finance Module Styles
+ * 
+ * Premium styling for the Finance module matching the Team/Quotes/Diary v2 aesthetic
+ * Design: Clean whites, subtle grays, purple gradient accents
+ * 
+ * @package    GlazierOS
+ * @subpackage Finance
+ * @version    0.6.0
+ */
+
+/* ============================================================================
+   FINANCE DASHBOARD - MAIN LAYOUT
+   ============================================================================ */
+
+.gos-finance-dashboard {
+    padding: 0;
+    background: #f9fafb;
+}
+
+.gos-finance-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 32px;
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 24px;
+}
+
+.gos-finance-header h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+}
+
+.gos-finance-header-actions {
+    display: flex;
+    gap: 12px;
+}
+
+/* ============================================================================
+   METRICS CARDS - DASHBOARD STATS
+   ============================================================================ */
+
+.gos-finance-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 0 32px 24px;
+}
+
+.gos-finance-metric-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+    border: 1px solid #e5e7eb;
+}
+
+.gos-finance-metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+    border-color: #667eea;
+}
+
+.gos-finance-metric-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.gos-finance-metric-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 4px;
+}
+
+.gos-finance-metric-value.positive {
+    color: #10b981;
+}
+
+.gos-finance-metric-value.negative {
+    color: #ef4444;
+}
+
+.gos-finance-metric-change {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.gos-finance-metric-change.up {
+    color: #10b981;
+}
+
+.gos-finance-metric-change.down {
+    color: #ef4444;
+}
+
+/* ============================================================================
+   TABS - NAVIGATION
+   ============================================================================ */
+
+.gos-finance-tabs {
+    display: flex;
+    gap: 8px;
+    padding: 0 32px;
+    margin-bottom: 24px;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.gos-finance-tab {
+    padding: 12px 24px;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: #6b7280;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: -2px;
+}
+
+.gos-finance-tab:hover {
+    color: #667eea;
+    background: #f9fafb;
+}
+
+.gos-finance-tab.active {
+    color: #667eea;
+    border-bottom-color: #667eea;
+    background: white;
+}
+
+.gos-finance-tab-content {
+    display: none;
+}
+
+.gos-finance-tab-content.active {
+    display: block;
+}
+
+/* ============================================================================
+   INVOICE LIST - TABLE LAYOUT
+   ============================================================================ */
+
+.gos-finance-content {
+    padding: 0 32px;
+}
+
+.gos-finance-filters {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    align-items: center;
+    background: white;
+    padding: 16px 20px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+}
+
+.gos-finance-search {
+    flex: 1;
+    position: relative;
+}
+
+.gos-finance-search input {
+    width: 100%;
+    padding: 10px 16px 10px 40px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+}
+
+.gos-finance-search input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.gos-finance-search::before {
+    content: '🔍';
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    opacity: 0.5;
+}
+
+.gos-finance-filter-select {
+    padding: 10px 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 150px;
+}
+
+.gos-finance-filter-select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* ============================================================================
+   INVOICE TABLE
+   ============================================================================ */
+
+.gos-finance-table-container {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+}
+
+.gos-finance-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.gos-finance-table thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.gos-finance-table th {
+    padding: 16px 20px;
+    text-align: left;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.gos-finance-table tbody tr {
+    border-bottom: 1px solid #f3f4f6;
+    transition: background-color 0.2s ease;
+}
+
+.gos-finance-table tbody tr:hover {
+    background: #f9fafb;
+}
+
+.gos-finance-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.gos-finance-table td {
+    padding: 16px 20px;
+    font-size: 0.875rem;
+    color: #1f2937;
+}
+
+/* ============================================================================
+   STATUS BADGES
+   ============================================================================ */
+
+.gos-finance-status {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.gos-finance-status.draft {
+    background: #e5e7eb;
+    color: #6b7280;
+}
+
+.gos-finance-status.sent {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.gos-finance-status.viewed {
+    background: #e0e7ff;
+    color: #4338ca;
+}
+
+.gos-finance-status.paid {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.gos-finance-status.partial {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.gos-finance-status.overdue {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.gos-finance-status.cancelled {
+    background: #f3f4f6;
+    color: #4b5563;
+}
+
+/* Category Badges */
+.gos-finance-category-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    background: #ede9fe;
+    color: #5b21b6;
+}
+
+/* ============================================================================
+   TABLE ACTIONS
+   ============================================================================ */
+
+.gos-finance-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.gos-finance-action-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: #f3f4f6;
+    color: #4b5563;
+}
+
+.gos-finance-action-btn:hover {
+    background: #e5e7eb;
+    color: #1f2937;
+}
+
+.gos-finance-action-btn.primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.gos-finance-action-btn.primary:hover {
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    transform: translateY(-1px);
+}
+
+.gos-finance-action-btn.danger {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.gos-finance-action-btn.danger:hover {
+    background: #fecaca;
+}
+
+/* ============================================================================
+   INVOICE MODAL
+   ============================================================================ */
+
+.gos-finance-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999999 !important; /* Higher than WordPress admin bar */
+    padding: 20px;
+    opacity: 0;
+    animation: fadeIn 0.2s ease forwards;
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
+
+.gos-finance-modal {
+    background: white;
+    border-radius: 16px;
+    max-width: 900px;
+    width: 100%;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    transform: scale(0.9);
+    animation: scaleIn 0.2s ease forwards;
+}
+
+@keyframes scaleIn {
+    to { transform: scale(1); }
+}
+
+.gos-finance-modal-header {
+    padding: 24px 32px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.gos-finance-modal-header h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.gos-finance-modal-close {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.gos-finance-modal-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
+}
+
+.gos-finance-modal-body {
+    padding: 32px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.gos-finance-modal-footer {
+    padding: 20px 32px;
+    background: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+/* ============================================================================
+   FORM STYLES
+   ============================================================================ */
+
+.gos-finance-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.gos-finance-form-grid.full-width {
+    grid-template-columns: 1fr;
+}
+
+.gos-finance-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.gos-finance-form-group label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+.gos-finance-form-group label.required::after {
+    content: '*';
+    color: #ef4444;
+    margin-left: 4px;
+}
+
+.gos-finance-form-group input,
+.gos-finance-form-group select,
+.gos-finance-form-group textarea {
+    padding: 10px 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.gos-finance-form-group input:focus,
+.gos-finance-form-group select:focus,
+.gos-finance-form-group textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.gos-finance-form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* ============================================================================
+   LINE ITEMS TABLE
+   ============================================================================ */
+
+.gos-finance-line-items {
+    margin-top: 32px;
+}
+
+.gos-finance-line-items h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 16px;
+}
+
+.gos-finance-line-item {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr auto;
+    gap: 12px;
+    align-items: end;
+    margin-bottom: 12px;
+    padding: 16px;
+    background: #f9fafb;
+    border-radius: 8px;
+}
+
+.gos-finance-line-item-remove {
+    background: #fee2e2;
+    color: #991b1b;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+}
+
+.gos-finance-line-item-remove:hover {
+    background: #fecaca;
+}
+
+.gos-finance-add-item {
+    margin-top: 12px;
+    padding: 10px 20px;
+    background: white;
+    border: 2px dashed #d1d5db;
+    color: #667eea;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    width: 100%;
+}
+
+.gos-finance-add-item:hover {
+    border-color: #667eea;
+    background: #f5f3ff;
+}
+
+/* ============================================================================
+   INVOICE TOTALS
+   ============================================================================ */
+
+.gos-finance-totals {
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 2px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+}
+
+.gos-finance-total-row {
+    display: grid;
+    grid-template-columns: 150px 150px;
+    gap: 20px;
+    font-size: 0.875rem;
+}
+
+.gos-finance-total-row.grand-total {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1f2937;
+    padding-top: 12px;
+    border-top: 2px solid #667eea;
+}
+
+.gos-finance-total-label {
+    text-align: right;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.gos-finance-total-value {
+    text-align: right;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+/* ============================================================================
+   BUTTONS
+   ============================================================================ */
+
+.gos-btn {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.gos-btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.gos-btn-primary:hover {
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    transform: translateY(-1px);
+}
+
+.gos-btn-secondary {
+    background: white;
+    color: #667eea;
+    border: 2px solid #667eea;
+}
+
+.gos-btn-secondary:hover {
+    background: #f5f3ff;
+}
+
+.gos-btn-danger {
+    background: #ef4444;
+    color: white;
+}
+
+.gos-btn-danger:hover {
+    background: #dc2626;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.gos-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ============================================================================
+   EMPTY STATE
+   ============================================================================ */
+
+.gos-finance-empty {
+    text-align: center;
+    padding: 80px 20px;
+    background: white;
+    border-radius: 12px;
+    border: 2px dashed #d1d5db;
+}
+
+.gos-finance-empty-icon {
+    font-size: 4rem;
+    margin-bottom: 16px;
+    opacity: 0.3;
+}
+
+.gos-finance-empty h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 8px;
+}
+
+.gos-finance-empty p {
+    color: #6b7280;
+    margin-bottom: 24px;
+}
+
+/* ============================================================================
+   LOADING STATE
+   ============================================================================ */
+
+.gos-finance-loading {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.gos-finance-spinner {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f4f6;
+    border-top-color: #667eea;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ============================================================================
+   PAGINATION
+   ============================================================================ */
+
+.gos-finance-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 24px;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+}
+
+.gos-finance-page-btn {
+    padding: 8px 16px;
+    border: 1px solid #d1d5db;
+    background: white;
+    color: #6b7280;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.gos-finance-page-btn:hover {
+    border-color: #667eea;
+    color: #667eea;
+}
+
+.gos-finance-page-btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: transparent;
+}
+
+.gos-finance-page-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================ */
+
+@media (max-width: 1024px) {
+    .gos-finance-metrics {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .gos-finance-form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .gos-finance-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+    
+    .gos-finance-metrics {
+        grid-template-columns: 1fr;
+        padding: 0 16px 16px;
+    }
+    
+    .gos-finance-content {
+        padding: 0 16px;
+    }
+    
+    .gos-finance-filters {
+        flex-direction: column;
+    }
+    
+    .gos-finance-table-container {
+        overflow-x: auto;
+    }
+    
+    .gos-finance-table {
+        min-width: 800px;
+    }
+    
+    .gos-finance-modal {
+        max-width: 100%;
+        max-height: 100vh;
+        border-radius: 0;
+    }
+    
+    .gos-finance-modal-body {
+        padding: 20px;
+    }
+    
+    .gos-finance-line-item {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .gos-finance-header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .gos-finance-metric-value {
+        font-size: 1.5rem;
+    }
+    
+    .gos-finance-table th,
+    .gos-finance-table td {
+        padding: 12px 16px;
+    }
+}
+
+/* ============================================================================
+   TOAST NOTIFICATIONS
+   ============================================================================ */
+
+.gos-toast-container {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    z-index: 1000000;
+    pointer-events: none;
+}
+
+.gos-toast {
+    background: white;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+    min-width: 300px;
+    max-width: 400px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    pointer-events: all;
+    opacity: 0;
+    transform: translateX(400px);
+    animation: slideIn 0.3s ease forwards;
+}
+
+@keyframes slideIn {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.gos-toast.hiding {
+    animation: slideOut 0.3s ease forwards;
+}
+
+@keyframes slideOut {
+    to {
+        opacity: 0;
+        transform: translateX(400px);
+    }
+}
+
+.gos-toast-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.gos-toast.success .gos-toast-icon {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.gos-toast.error .gos-toast-icon {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.gos-toast.info .gos-toast-icon {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.gos-toast.warning .gos-toast-icon {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.gos-toast-content {
+    flex: 1;
+}
+
+.gos-toast-message {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1f2937;
+    margin: 0;
+}
+
+.gos-toast-close {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 4px;
+    font-size: 18px;
+    line-height: 1;
+    transition: color 0.2s ease;
+}
+
+.gos-toast-close:hover {
+    color: #4b5563;
+}

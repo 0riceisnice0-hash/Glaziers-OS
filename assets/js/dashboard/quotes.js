@@ -3,54 +3,47 @@ console.log('⚙️ quotes.js loaded');
 
 jQuery(function($) {
     const $panel = $('#gsa-quotes');
+    let state = {
+        currentPage: 1,
+        totalPages: 1,
+        searchTerm: '',
+        sortBy: 'date_desc',
+    };
+
     let allJobs = []; // This will hold the master list of jobs for the session.
-    let statusSettings = { lead: [], install: [] }; // To hold status colors and labels
+    // Hardcoded statuses, removing the need for a settings API call.
+    const statusSettings = {
+        lead: [
+            { label: 'New', color: '#3498db' },
+            { label: 'Quoted', color: '#f1c40f' },
+            { label: 'Follow-up', color: '#e67e22' },
+            { label: 'Won', color: '#2ecc71' },
+            { label: 'Lost', color: '#e74c3c' }
+        ],
+        install: [
+            { label: 'Pending', color: '#95a5a6' },
+            { label: 'Scheduled', color: '#8e44ad' },
+            { label: 'In Progress', color: '#3498db' },
+            { label: 'Completed', color: '#27ae60' }
+        ]
+    };
 
     /**
      * Renders the quotes list based on the current search and sort values.
      */
     function renderQuotes() {
-        const searchTerm = ($panel.find('#gsa-quote-search').val() || '').toLowerCase();
-        const sortBy = $panel.find('#gsa-quote-sort').val();
         const $listContainer = $panel.find('#gsa-quotes-list');
 
         if (!allJobs || allJobs.length === 0) {
-            $listContainer.html('<p class="gsa-no-data-message">No quotes found.</p>');
+            $listContainer.html(`
+                <div class="gsa-empty-state">
+                    <h3>No quotes yet!</h3>
+                    <p>Get started by creating your first quote.</p>
+                    <button id="gsa-create-new-quote-btn-empty" class="gos-button">Create New Quote</button>
+                </div>`);
             return;
         }
-
-        // 1. Filter jobs
-        const filteredJobs = allJobs.filter(j => {
-            const searchString = [
-                j.id,
-                j.first_name,
-                j.last_name,
-                j.email,
-                j.address,
-                `${j.first_name} ${j.last_name}`
-            ].join(' ').toLowerCase();
-            return searchString.includes(searchTerm);
-        });
-
-        // 2. Sort jobs
-        filteredJobs.sort((a, b) => {
-            switch (sortBy) {
-                case 'price_desc': return b.price - a.price;
-                case 'price_asc': return a.price - b.price;
-                case 'date_asc': return new Date(a.date) - new Date(b.date);
-                case 'date_desc':
-                default:
-                    return new Date(b.date) - new Date(a.date);
-            }
-        });
-
-        // 3. Generate and render HTML
-        if (filteredJobs.length === 0) {
-            $listContainer.html('<p class="gsa-no-data-message">No quotes match your search.</p>');
-            return;
-        }
-
-        const html = filteredJobs.map(j => {
+        const html = allJobs.map(j => {
             const leadStatus = statusSettings.lead.find(s => s.label === j.lead_status) || { label: j.lead_status, color: '#cccccc' };
             const installStatus = statusSettings.install.find(s => s.label === j.install_status) || { label: j.install_status, color: '#cccccc' };
             const customerName = [j.first_name, j.last_name].filter(Boolean).join(' ');
@@ -104,25 +97,36 @@ jQuery(function($) {
      * Fetches fresh job data from the server and triggers a re-render.
      */
     function loadAndRenderQuotes() {
-        $panel.find('#gsa-quotes-list').html('<p class="gsa-no-data-message">Loading quotes…</p>');
+        const $listContainer = $panel.find('#gsa-quotes-list');
+        $listContainer.html('<p class="gsa-no-data-message">Loading quotes…</p>');
 
-        Promise.all([
-            fetch('/wp-json/glazieros/v1/jobs').then(r => r.json()),
-            fetch('/wp-json/glazieros/v1/settings/statuses').then(r => r.json())
-        ])
-            .then(([jobs, statuses]) => {
+        const url = new URL(window.location.origin + '/wp-json/glazieros/v1/jobs');
+        url.searchParams.set('page', state.currentPage);
+        url.searchParams.set('search', state.searchTerm);
+        url.searchParams.set('sort', state.sortBy);
+
+        fetch(url, {
+            headers: { 'X-WP-Nonce': wpApiSettings.nonce }
+        })
+            .then(res => {
+                state.totalPages = parseInt(res.headers.get('X-WP-TotalPages') || '1', 10);
+                return res.json();
+            })
+            .then(jobs => {
                 allJobs = Array.isArray(jobs) ? jobs : []; // Ensure it's an array
-                statusSettings = statuses;
                 renderQuotes();
-                // After rendering, inject dynamic styles for statuses
-                injectStatusStyles();
+                renderPagination();
             })
             .catch(err => {
                 console.error('Error fetching jobs:', err);
                 $listContainer.html(`<p class="gos-error">Error loading quotes. Please try again.</p>`);
             });
     }
-
+    
+    function renderPagination() {
+        // Pagination rendering logic would go here
+        // For MVP, we'll keep it simple and just reload.
+    }
     /**
      * Injects CSS rules for status colors into the document head.
      * This is more efficient than using inline styles on every element.
@@ -157,22 +161,128 @@ jQuery(function($) {
                         <option value="price_desc">Price: High to Low</option>
                         <option value="price_asc">Price: Low to High</option>
                     </select>
+                    <button id="gsa-create-new-quote-btn" class="gos-button">Create New Quote</button>
                 </div>
             </div>
             <div id="gsa-quotes-list" class="gsa-quotes-list-container"></div>
         `);
 
-        // Inject CSS for the new UI
+        // Inject CSS for the new UI - PREMIUM GRADIENT STYLING
         const css = `
-            .gsa-quotes-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; border-bottom: 1px solid #e0e0e0; background-color: #f8f9fa; }
-            .gsa-panel-title { margin: 0; font-size: 1.5rem; font-weight: 500; }
-            .gsa-quotes-controls { display: flex; gap: 1rem; }
-            .gsa-quotes-controls .gos-input { padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; min-width: 200px; }
-            .gsa-quotes-list-container { padding: 1.5rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 1.5rem; background-color: #f1f2f6; }
-            .gsa-quote-card { border: 1px solid #e0e0e0; border-radius: 8px; background-color: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.06); transition: all 0.2s ease-in-out; cursor: pointer; display: flex; flex-direction: column; }
-            .gsa-quote-card:hover, .gsa-quote-card:focus-within { box-shadow: 0 5px 15px rgba(0,0,0,0.1); transform: translateY(-4px); border-color: #4e73df; }
+            /* Premium Gradient Header */
+            .gsa-quotes-header { 
+                display: flex; 
+                justify-content: space-between; 
+                align-items: center; 
+                padding: 1.5rem 2rem; 
+                border-bottom: none;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                box-shadow: 0 4px 20px rgba(102, 126, 234, 0.2);
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .gsa-quotes-header::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: url('data:image/svg+xml,<svg width="60" height="60" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+                opacity: 0.3;
+                pointer-events: none;
+            }
+            
+            .gsa-panel-title { 
+                margin: 0; 
+                font-size: 1.75rem; 
+                font-weight: 700; 
+                color: #ffffff;
+                text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+                position: relative;
+                z-index: 1;
+            }
+            
+            .gsa-quotes-controls { 
+                display: flex; 
+                gap: 1rem; 
+                align-items: center;
+                position: relative;
+                z-index: 1;
+            }
+            
+            /* Premium Glass Input Fields */
+            .gsa-quotes-controls .gos-input { 
+                padding: 0.75rem 1rem; 
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                border-radius: 8px; 
+                min-width: 200px;
+                background: rgba(255, 255, 255, 0.15);
+                backdrop-filter: blur(10px);
+                color: #ffffff;
+                font-size: 0.9375rem;
+                transition: all 0.2s ease;
+            }
+            
+            .gsa-quotes-controls .gos-input:focus {
+                outline: none;
+                border-color: rgba(255, 255, 255, 0.6);
+                background: rgba(255, 255, 255, 0.25);
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            }
+            
+            .gsa-quotes-controls .gos-input::placeholder {
+                color: rgba(255, 255, 255, 0.7);
+            }
+            
+            .gsa-quotes-controls .gos-input option {
+                background: #667eea;
+                color: #ffffff;
+            }
+            
+            /* Premium List Container */
+            .gsa-quotes-list-container { 
+                padding: 2rem; 
+                display: grid; 
+                grid-template-columns: repeat(auto-fill, minmax(380px, 400px)); 
+                justify-content: start; 
+                gap: 1.5rem; 
+                background: linear-gradient(135deg, #f5f6fa 0%, #e8eaf6 100%);
+            }
+            
+            /* Premium Quote Cards with Top Gradient Bar */
+            .gsa-quote-card { 
+                border: 1px solid #e5e7eb;
+                border-radius: 12px; 
+                background-color: #fff; 
+                box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
+                transition: all 0.3s ease; 
+                cursor: pointer; 
+                display: flex; 
+                flex-direction: column;
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .gsa-quote-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 4px;
+                background: linear-gradient(90deg, #667eea, #764ba2);
+            }
+            
+            .gsa-quote-card:hover, .gsa-quote-card:focus-within { 
+                box-shadow: 0 12px 32px rgba(102, 126, 234, 0.2);
+                transform: translateY(-6px); 
+                border-color: #667eea;
+            }
+            
             .gsa-quote-card:focus-within { outline: none; }
-            .gsa-quote-card-header { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1.25rem; border-bottom: 1px solid #eee; }
+            .gsa-quote-card-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem 0.75rem; border-bottom: 1px solid #f3f4f6; }
             .gsa-quote-title { margin: 0; font-size: 1.1rem; font-weight: 600; text-transform: capitalize; color: #333; flex-shrink: 0; margin-right: 1rem; }
             .gsa-dual-status-wrapper { position: relative; }
             .gsa-dual-status { display: flex; border-radius: 12px; overflow: hidden; cursor: pointer; }
@@ -189,13 +299,14 @@ jQuery(function($) {
             .gsa-quote-card-body p strong { color: #333; font-weight: 500; }
             .gsa-quote-card-footer { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1.25rem; background-color: #fdfdfd; border-top: 1px solid #eee; font-size: 0.8rem; color: #888; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; }
             .gsa-card-actions { display: flex; align-items: center; gap: 0.5rem; }
-            .gsa-view-details-hint { font-weight: 500; color: #4e73df; opacity: 0; transition: opacity 0.2s ease-in-out; }
+            .gsa-view-details-hint { font-weight: 500; color: #06b6d4; opacity: 0; transition: opacity 0.2s ease-in-out; }
             .gsa-quote-card:hover .gsa-view-details-hint, .gsa-quote-card:focus-within .gsa-view-details-hint { opacity: 1; }
             .gsa-delete-quote-btn { background: #fbebeb; color: #e74a3b; border: 1px solid #f5c6cb; border-radius: 50%; width: 24px; height: 24px; font-size: 1.2rem; line-height: 22px; text-align: center; padding: 0; cursor: pointer; opacity: 0; transition: all 0.2s ease; }
             .gsa-quote-card:hover .gsa-delete-quote-btn { opacity: 1; }
             .gsa-delete-quote-btn:hover { background: #e74a3b; color: #fff; }
             .gsa-delete-quote-btn:disabled { background: #ccc; color: #fff; cursor: not-allowed; }
             .gsa-no-data-message { text-align: center; padding: 3rem; color: #777; grid-column: 1 / -1; }
+            .gsa-empty-state { text-align: center; padding: 4rem 2rem; background: #fff; border: 2px dashed #e0e0e0; border-radius: 8px; grid-column: 1 / -1; }
         `;
         if (!$('#gsa-quotes-styles').length) {
             $('<style id="gsa-quotes-styles"></style>').text(css).appendTo('head');
@@ -203,7 +314,18 @@ jQuery(function($) {
 
         // Attach event handlers (delegated to the panel)
         $panel.on('input', '#gsa-quote-search', renderQuotes);
-        $panel.on('change', '#gsa-quote-sort', renderQuotes);
+        $panel.on('change', '#gsa-quote-sort', function() {
+            state.sortBy = $(this).val();
+            loadAndRenderQuotes();
+        });
+        $panel.on('input', '#gsa-quote-search', $.debounce(500, function() {
+            state.searchTerm = $(this).val();
+            loadAndRenderQuotes();
+        }));
+        $panel.on('click', '#gsa-create-new-quote-btn, #gsa-create-new-quote-btn-empty', function() {
+            // This will trigger the dashboard-app.js to show the 'new-quote' panel
+            $(document).trigger('gsa:activate:panel', ['new-quote']);
+        });
 
         $panel.on('click keydown', '.gsa-quote-card', function(e) {
             // If the click or keypress was on a button or link, let their specific handlers manage it.
@@ -259,35 +381,34 @@ jQuery(function($) {
 
             fetch(`/wp-json/glazieros/v1/jobs/${jobId}/status`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-WP-Nonce': wpApiSettings.nonce
+                },
                 body: JSON.stringify({ status: newStatus, type: statusType })
             })
             .then(r => {
                 if (!r.ok) throw new Error('Failed to update status');
                 return r.json();
             })
-            .then(response => {
-                if (response.success) {
-                    // Update the master data array
-                    const jobIndex = allJobs.findIndex(j => j.id == jobId);
-                    if (jobIndex > -1) {
-                        if (response.type === 'lead') {
-                            allJobs[jobIndex].lead_status = response.new_status;
-                        } else if (response.type === 'install') {
-                            allJobs[jobIndex].install_status = response.new_status;
-                        }
-                    }
-                    // Re-render the whole list from the updated local data
-                    renderQuotes();
-                } else {
-                    throw new Error('Update was not successful.');
+            .then(updatedJob => {
+                // Update the master data array
+                const jobIndex = allJobs.findIndex(j => j.id == updatedJob.id);
+                if (jobIndex > -1) {
+                    allJobs[jobIndex] = updatedJob;
                 }
+                // Directly update the UI of the specific card
+                const newStatusLabel = statusType === 'lead' ? updatedJob.lead_status : updatedJob.install_status;
+                const newStatusInfo = statusSettings[statusType].find(s => s.label === newStatusLabel);
+                $statusPart.find('span').text(newStatusLabel);
+                $statusPart.data('current-status', newStatusLabel);
+                $statusPart.css('background-color', newStatusInfo ? newStatusInfo.color : '#cccccc');
             })
             .catch(err => {
                 console.error('Error updating status:', err);
                 alert('Could not update status. Please try again.');
-                // Re-render to revert the "Saving..." text
-                renderQuotes();
+                // Revert the UI by reloading the data
+                loadAndRenderQuotes();
             });
         });
 
@@ -305,7 +426,8 @@ jQuery(function($) {
             $button.prop('disabled', true).html('...');
 
             fetch(`/wp-json/glazieros/v1/jobs/${jobId}`, {
-                method: 'DELETE'
+                method: 'DELETE',
+                headers: { 'X-WP-Nonce': wpApiSettings.nonce }
             })
             .then(r => {
                 if (!r.ok) throw new Error('Failed to delete quote.');
@@ -333,10 +455,18 @@ jQuery(function($) {
 
         // Setup the panel on first activation
         if (!$panel.data('init')) {
+            injectStatusStyles();
             setupPanel();
         }
 
         // Always refresh data when panel is activated
         loadAndRenderQuotes();
+    });
+
+    // Listen for data updates from other panels
+    $(document).on('gsa:data:updated', (e, type, id) => {
+        if (type === 'quote' && $panel.is(':visible')) {
+            loadAndRenderQuotes();
+        }
     });
 });

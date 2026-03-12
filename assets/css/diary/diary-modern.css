@@ -1,0 +1,2270 @@
+/**
+ * ============================================================================
+ * GLAZIEROS DIARY V2.0.0 - MODERN CALENDAR PLATFORM
+ * ============================================================================
+ * Design System: Fresh, vibrant, professional
+ * Inspired by: Notion Calendar, Linear, Apple Calendar
+ * Color Palette: Teal/Cyan primary with balanced accents
+ * Author: Glazieros Development Team
+ * Last Updated: 2025-10-26 23:50:00 UTC
+ * Cache Bust: v2.1.0 - CSS-based colors (no inline styles)
+ */
+
+/* ============================================================================
+   ROOT VARIABLES - MODERN DESIGN TOKENS
+   ============================================================================ */
+
+:root {
+    /* Brand Colors - Fresh & Vibrant Palette */
+    --gos-primary: #06b6d4;              /* Cyan - Primary accent */
+    --gos-primary-hover: #0891b2;
+    --gos-primary-light: #cffafe;
+    --gos-primary-dark: #0e7490;
+    
+    --gos-secondary: #8b5cf6;            /* Purple - Secondary accent */
+    --gos-secondary-hover: #7c3aed;
+    --gos-secondary-light: #ede9fe;
+    
+    --gos-accent: #f59e0b;               /* Amber - Highlights */
+    --gos-accent-hover: #d97706;
+    --gos-accent-light: #fef3c7;
+    
+    --gos-success: #10b981;              /* Emerald */
+    --gos-success-light: #d1fae5;
+    
+    --gos-warning: #f59e0b;              /* Amber */
+    --gos-warning-light: #fef3c7;
+    
+    --gos-danger: #ef4444;               /* Red */
+    --gos-danger-light: #fee2e2;
+    
+    --gos-info: #3b82f6;                 /* Blue */
+    --gos-info-light: #dbeafe;
+    
+    /* Neutrals - Refined Grays */
+    --gos-gray-50: #f9fafb;
+    --gos-gray-100: #f3f4f6;
+    --gos-gray-200: #e5e7eb;
+    --gos-gray-300: #d1d5db;
+    --gos-gray-400: #9ca3af;
+    --gos-gray-500: #6b7280;
+    --gos-gray-600: #4b5563;
+    --gos-gray-700: #374151;
+    --gos-gray-800: #1f2937;
+    --gos-gray-900: #111827;
+    
+    /* Spacing - Consistent Scale */
+    --gos-space-1: 0.25rem;  /* 4px */
+    --gos-space-2: 0.5rem;   /* 8px */
+    --gos-space-3: 0.75rem;  /* 12px */
+    --gos-space-4: 1rem;     /* 16px */
+    --gos-space-5: 1.25rem;  /* 20px */
+    --gos-space-6: 1.5rem;   /* 24px */
+    --gos-space-8: 2rem;     /* 32px */
+    --gos-space-10: 2.5rem;  /* 40px */
+    
+    /* Border Radius - Rounded Corners */
+    --gos-radius-sm: 0.375rem;  /* 6px */
+    --gos-radius-md: 0.5rem;    /* 8px */
+    --gos-radius-lg: 0.75rem;   /* 12px */
+    --gos-radius-xl: 1rem;      /* 16px */
+    --gos-radius-pill: 624px;   /* Fully rounded */
+    
+    /* Shadows - Subtle Depth */
+    --gos-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --gos-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --gos-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --gos-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    
+    /* Typography */
+    --gos-font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --gos-font-mono: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+    
+    /* Transitions - Smooth Animations */
+    --gos-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --gos-transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    --gos-transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Calendar-Specific */
+    --gos-cell-height: 120px;
+    --gos-header-height: 56px;
+    --gos-sidebar-width: 200px;
+}
+
+/* ============================================================================
+   LAYOUT - MAIN CONTAINER
+   ============================================================================ */
+
+.gos-diary-container-modern {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    background: white;
+    font-family: var(--gos-font-sans);
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+}
+
+/* ============================================================================
+   TOPBAR - COMPACT HEADER
+   ============================================================================ */
+
+.gos-diary-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--gos-header-height);
+    padding: 0 var(--gos-space-6);
+    background: white;
+    border-bottom: 1px solid var(--gos-gray-100);
+    gap: var(--gos-space-6);
+    position: relative;
+    z-index: 100;
+    flex-shrink: 0;
+}
+
+/* Left Section - Title + New Event */
+.gos-topbar-left {
+    display: flex;
+    align-items: center;
+    gap: var(--gos-space-4);
+}
+
+.gos-diary-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--gos-gray-900);
+    margin: 0;
+}
+
+.gos-new-event-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--gos-space-2);
+    padding: var(--gos-space-2) var(--gos-space-4);
+    background: var(--gos-primary);
+    color: white;
+    border: none;
+    border-radius: var(--gos-radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--gos-transition-fast);
+    box-shadow: var(--gos-shadow-sm);
+}
+
+.gos-new-event-btn:hover {
+    background: var(--gos-primary-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--gos-shadow-md);
+}
+
+.gos-new-event-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Center Section - Navigation + Date + View Pills */
+.gos-topbar-center {
+    display: flex;
+    align-items: center;
+    gap: var(--gos-space-4);
+    flex: 1;
+    justify-content: center;
+    position: relative;
+    z-index: 50;
+}
+
+.gos-date-nav {
+    display: flex;
+    align-items: center;
+    gap: var(--gos-space-2);
+}
+
+.gos-nav-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: white;
+    border: 1px solid var(--gos-gray-300);
+    border-radius: var(--gos-radius-sm);
+    cursor: pointer;
+    transition: all var(--gos-transition-fast);
+    color: var(--gos-gray-700);
+}
+
+.gos-nav-btn:hover {
+    background: var(--gos-gray-50);
+    border-color: var(--gos-gray-400);
+    color: var(--gos-gray-900);
+}
+
+.gos-today-btn {
+    padding: var(--gos-space-2) var(--gos-space-3);
+    background: white;
+    border: 1px solid var(--gos-gray-300);
+    border-radius: var(--gos-radius-sm);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--gos-gray-700);
+    cursor: pointer;
+    transition: all var(--gos-transition-fast);
+}
+
+.gos-today-btn:hover {
+    background: var(--gos-gray-50);
+    border-color: var(--gos-gray-400);
+    color: var(--gos-gray-900);
+}
+
+.gos-current-date {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--gos-gray-900);
+    min-width: 200px;
+    text-align: center;
+}
+
+/* View Switcher - Pill Buttons */
+.gos-view-switcher {
+    display: flex;
+    gap: var(--gos-space-1);
+    background: var(--gos-gray-100);
+    padding: var(--gos-space-1);
+    border-radius: var(--gos-radius-lg);
+    position: relative;
+    z-index: 50;
+}
+
+.gos-view-pill {
+    display: flex;
+    align-items: center;
+    gap: var(--gos-space-2);
+    padding: var(--gos-space-2) var(--gos-space-4);
+    background: transparent;
+    border: none;
+    border-radius: var(--gos-radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--gos-gray-600);
+    cursor: pointer;
+    transition: all var(--gos-transition-fast);
+    white-space: nowrap;
+    position: relative;
+    z-index: 51;
+    pointer-events: auto;
+}
+
+.gos-view-pill svg {
+    width: 16px;
+    height: 16px;
+    opacity: 0.7;
+    transition: opacity var(--gos-transition-fast);
+    pointer-events: none;
+}
+
+.gos-view-pill:hover {
+    background: var(--gos-gray-200);
+    color: var(--gos-gray-900);
+}
+
+.gos-view-pill:hover svg {
+    opacity: 1;
+}
+
+.gos-view-pill.active {
+    background: white;
+    color: var(--gos-gray-900);
+    box-shadow: var(--gos-shadow-sm);
+}
+
+.gos-view-pill.active svg {
+    opacity: 1;
+}
+
+/* Right Section - Stats + Filter */
+.gos-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: var(--gos-space-3);
+}
+
+.gos-stats-badges {
+    display: flex;
+    gap: var(--gos-space-2);
+}
+
+.gos-stat-badge {
+    display: flex;
+    align-items: center;
+    gap: var(--gos-space-2);
+    padding: var(--gos-space-2) var(--gos-space-3);
+    background: var(--gos-gray-100);
+    border-radius: var(--gos-radius-pill);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--gos-gray-700);
+}
+
+.gos-stat-badge .badge-count {
+    color: var(--gos-gray-900);
+    font-weight: 600;
+}
+
+.gos-filter-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--gos-space-2);
+    padding: var(--gos-space-2) var(--gos-space-3);
+    background: white;
+    border: 1px solid var(--gos-gray-300);
+    border-radius: var(--gos-radius-sm);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--gos-gray-700);
+    cursor: pointer;
+    transition: all var(--gos-transition-fast);
+}
+
+.gos-filter-btn:hover {
+    background: var(--gos-gray-50);
+    border-color: var(--gos-gray-400);
+}
+
+.gos-filter-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* ============================================================================
+   BODY - SCROLLABLE CONTENT AREA
+   ============================================================================ */
+
+.gos-diary-body {
+    flex: 1;
+    overflow: auto;
+    background: white;
+    transition: opacity var(--gos-transition-fast);
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+}
+
+.gos-diary-body.gos-view-loading {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* ============================================================================
+   MONTH VIEW - MODERN CALENDAR GRID
+   ============================================================================ */
+
+.gos-month-calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    background: var(--gos-gray-100);
+    padding: 0;
+    border-radius: 0;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+}
+
+/* Month Header - Weekday Labels */
+.gos-month-weekday-header {
+    background: white;
+    padding: var(--gos-space-3);
+    text-align: center;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--gos-gray-600);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: 0;
+}
+
+/* Month Cells */
+.gos-month-cell-modern {
+    background: white;
+    min-height: var(--gos-cell-height);
+    padding: var(--gos-space-3);
+    border-radius: 0;
+    transition: all var(--gos-transition-fast);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gos-space-2);
+    border: none;
+}
+
+.gos-month-cell-modern:hover {
+    background: var(--gos-gray-50);
+    transform: none;
+    box-shadow: inset 0 0 0 2px var(--gos-primary-light);
+}
+
+.gos-month-cell-modern.is-outside-month {
+    background: var(--gos-gray-50);
+    opacity: 0.5;
+}
+
+.gos-month-cell-modern.gos-month-cell-today {
+    background: var(--gos-primary-light);
+    border: none;
+    box-shadow: inset 0 0 0 2px var(--gos-primary);
+}
+
+.gos-month-cell-modern.gos-month-cell-today:hover {
+    background: #ddd6fe;
+}
+
+/* Cell Header - Day Number + Add Button */
+.gos-month-cell-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--gos-space-1);
+}
+
+.gos-month-day-number {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--gos-gray-700);
+}
+
+.gos-month-cell-today .gos-month-day-number {
+    background: var(--gos-primary);
+    color: white;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.gos-month-add-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background: var(--gos-gray-200);
+    border: none;
+    border-radius: var(--gos-radius-sm);
+    cursor: pointer;
+    color: var(--gos-gray-600);
+    transition: all var(--gos-transition-fast);
+}
+
+.gos-month-cell-modern:hover .gos-month-add-btn {
+    display: flex;
+}
+
+.gos-month-add-btn:hover {
+    background: var(--gos-primary);
+    color: white;
+    transform: scale(1.1);
+}
+
+/* Event Pills in Month Cells */
+.gos-month-events-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gos-space-1);
+}
+
+.gos-month-event-pill {
+    display: flex;
+    align-items: center;
+    gap: var(--gos-space-2);
+    padding: var(--gos-space-1) var(--gos-space-2);
+    background: white;
+    border-left: 3px solid var(--gos-primary);
+    border-radius: var(--gos-radius-sm);
+    font-size: 0.75rem;
+    transition: all var(--gos-transition-fast);
+    cursor: pointer;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.gos-month-event-pill:hover {
+    background: var(--gos-primary-light);
+    transform: translateX(2px);
+    box-shadow: var(--gos-shadow-sm);
+    border-left-width: 4px;
+}
+
+.gos-month-event-pill .event-time {
+    font-weight: 600;
+    color: var(--gos-gray-700);
+    white-space: nowrap;
+}
+
+.gos-month-event-pill .event-title {
+    flex: 1;
+    color: var(--gos-gray-900);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.gos-month-event-pill .event-type {
+    padding: 2px 6px;
+    border-radius: var(--gos-radius-sm);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* Event Type Color Coding - Fresh Cyan/Teal Palette */
+.gos-month-event-pill.event-type-survey {
+    border-left-color: var(--gos-info);
+}
+.gos-month-event-pill.event-type-survey .event-type {
+    background: rgba(59, 130, 246, 0.15);
+    color: var(--gos-info);
+}
+
+.gos-month-event-pill.event-type-measure {
+    border-left-color: var(--gos-primary);
+}
+.gos-month-event-pill.event-type-measure .event-type {
+    background: var(--gos-primary-light);
+    color: var(--gos-primary-dark);
+}
+
+.gos-month-event-pill.event-type-delivery {
+    border-left-color: var(--gos-success);
+}
+.gos-month-event-pill.event-type-delivery .event-type {
+    background: var(--gos-success-light);
+    color: var(--gos-success);
+}
+
+.gos-month-event-pill.event-type-install {
+    border-left-color: var(--gos-accent);
+}
+.gos-month-event-pill.event-type-install .event-type {
+    background: var(--gos-accent-light);
+    color: var(--gos-accent);
+}
+
+.gos-month-event-pill.event-type-service {
+    border-left-color: var(--gos-danger);
+}
+.gos-month-event-pill.event-type-service .event-type {
+    background: var(--gos-danger-light);
+    color: var(--gos-danger);
+}
+
+.gos-month-event-pill.event-type-followup {
+    border-left-color: var(--gos-secondary);
+}
+.gos-month-event-pill.event-type-followup .event-type {
+    background: var(--gos-secondary-light);
+    color: var(--gos-secondary);
+}
+
+.gos-month-event-pill.event-type-meeting {
+    border-left-color: var(--gos-accent);
+}
+.gos-month-event-pill.event-type-meeting .event-type {
+    background: var(--gos-accent-light);
+    color: var(--gos-accent-hover);
+}
+
+.gos-month-event-pill.event-type-other {
+    border-left-color: var(--gos-gray-400);
+}
+.gos-month-event-pill.event-type-other .event-type {
+    background: var(--gos-gray-100);
+    color: var(--gos-gray-600);
+}
+
+.gos-month-view-more-btn {
+    padding: var(--gos-space-1) var(--gos-space-2);
+    background: transparent;
+    border: 1px dashed var(--gos-gray-300);
+    border-radius: var(--gos-radius-sm);
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--gos-gray-600);
+    cursor: pointer;
+    transition: all var(--gos-transition-fast);
+    text-align: center;
+}
+
+.gos-month-view-more-btn:hover {
+    background: var(--gos-gray-100);
+    border-color: var(--gos-gray-400);
+    color: var(--gos-gray-900);
+}
+
+/* ============================================================================
+   WEEK VIEW - FITTERS AS ROWS
+   ============================================================================ */
+
+.gos-week-view-calendar {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--gos-gray-100);
+    padding: 0;
+    border-radius: 0;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+}
+
+/* Week Header */
+.gos-week-header-modern {
+    display: grid;
+    grid-template-columns: 150px repeat(5, 1fr);
+    gap: 1px;
+    background: var(--gos-gray-100);
+    margin-bottom: 1px;
+}
+
+.gos-week-corner-cell {
+    background: white;
+    padding: var(--gos-space-3);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--gos-gray-600);
+    text-transform: uppercase;
+    border-radius: 0;
+    display: flex;
+    align-items: center;
+}
+
+.gos-week-day-header {
+    background: white;
+    padding: var(--gos-space-3);
+    text-align: center;
+    border-radius: 0;
+    transition: all var(--gos-transition-fast);
+}
+
+.gos-week-day-header:hover {
+    background: var(--gos-gray-50);
+}
+
+.gos-week-day-header.is-today {
+    background: var(--gos-primary-light);
+    border: none;
+    box-shadow: inset 0 0 0 2px var(--gos-primary);
+}
+
+.gos-week-day-header .day-name {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--gos-gray-600);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.gos-week-day-header .day-date {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--gos-gray-900);
+    margin-top: var(--gos-space-1);
+}
+
+.gos-week-day-header.is-today .day-date {
+    color: var(--gos-primary);
+}
+
+/* Week Body */
+.gos-week-body-modern {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+/* Fitter Rows */
+.gos-week-fitter-row {
+    display: grid;
+    grid-template-columns: 150px repeat(5, 1fr);
+    gap: 1px;
+    background: var(--gos-gray-100);
+}
+
+.gos-week-fitter-cell {
+    background: white;
+    padding: var(--gos-space-3);
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gos-space-1);
+}
+
+.gos-week-fitter-cell .fitter-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--gos-gray-900);
+}
+
+.gos-week-fitter-cell .fitter-meta {
+    font-size: 0.75rem;
+    color: var(--gos-gray-600);
+}
+
+/* Day Cells in Week View */
+.gos-week-day-cell {
+    background: white;
+    padding: var(--gos-space-3);
+    min-height: 100px;
+    border-radius: 0;
+    transition: all var(--gos-transition-fast);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gos-space-2);
+    border: none;
+}
+
+.gos-week-day-cell:hover {
+    background: var(--gos-gray-50);
+    box-shadow: inset 0 0 0 2px var(--gos-primary-light);
+}
+
+.gos-week-day-cell.is-today {
+    background: var(--gos-primary-light);
+    border: none;
+    box-shadow: inset 0 0 0 2px var(--gos-primary);
+}
+
+.gos-week-add-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: var(--gos-space-1);
+    width: 100%;
+    padding: var(--gos-space-2);
+    background: var(--gos-gray-100);
+    border: 1px dashed var(--gos-gray-300);
+    border-radius: var(--gos-radius-sm);
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--gos-gray-600);
+    cursor: pointer;
+    transition: all var(--gos-transition-fast);
+}
+
+.gos-week-day-cell.is-empty:hover .gos-week-add-btn {
+    display: flex;
+}
+
+.gos-week-add-btn:hover {
+    background: var(--gos-primary-light);
+    border-color: var(--gos-primary);
+    color: var(--gos-primary);
+}
+
+/* Week Event Pills */
+.gos-week-event-pill {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gos-space-1);
+    padding: var(--gos-space-2);
+    background: white;
+    border-left: 3px solid var(--gos-primary);
+    border-radius: var(--gos-radius-sm);
+    transition: all var(--gos-transition-fast);
+    cursor: pointer;
+    position: relative;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.gos-week-event-pill:hover {
+    background: var(--gos-primary-light);
+    transform: translateX(2px);
+    box-shadow: var(--gos-shadow-md);
+    border-left-width: 4px;
+}
+
+.gos-week-event-pill .event-time {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--gos-gray-700);
+}
+
+.gos-week-event-pill .event-title {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--gos-gray-900);
+}
+
+.gos-week-event-pill .event-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--gos-space-2);
+    margin-top: var(--gos-space-1);
+}
+
+.gos-week-event-pill .event-type-badge {
+    padding: 2px 6px;
+    border-radius: var(--gos-radius-sm);
+    font-size: 0.6875rem;
+    font-weight: 600;
+}
+
+/* Week Event Type Colors - Fresh Palette */
+.gos-week-event-pill.event-type-survey {
+    border-left-color: var(--gos-info);
+}
+.gos-week-event-pill.event-type-survey .event-type-badge {
+    background: rgba(59, 130, 246, 0.15);
+    color: var(--gos-info);
+}
+
+.gos-week-event-pill.event-type-measure {
+    border-left-color: var(--gos-primary);
+}
+.gos-week-event-pill.event-type-measure .event-type-badge {
+    background: var(--gos-primary-light);
+    color: var(--gos-primary-dark);
+}
+
+.gos-week-event-pill.event-type-delivery {
+    border-left-color: var(--gos-success);
+}
+.gos-week-event-pill.event-type-delivery .event-type-badge {
+    background: var(--gos-success-light);
+    color: var(--gos-success);
+}
+
+.gos-week-event-pill.event-type-install {
+    border-left-color: var(--gos-accent);
+}
+.gos-week-event-pill.event-type-install .event-type-badge {
+    background: var(--gos-accent-light);
+    color: var(--gos-accent);
+}
+
+.gos-week-event-pill.event-type-service {
+    border-left-color: var(--gos-danger);
+}
+.gos-week-event-pill.event-type-service .event-type-badge {
+    background: var(--gos-danger-light);
+    color: var(--gos-danger);
+}
+
+.gos-week-event-pill.event-type-followup {
+    border-left-color: var(--gos-secondary);
+}
+.gos-week-event-pill.event-type-followup .event-type-badge {
+    background: var(--gos-secondary-light);
+    color: var(--gos-secondary);
+}
+
+.gos-week-event-pill.event-type-meeting {
+    border-left-color: var(--gos-accent);
+}
+.gos-week-event-pill.event-type-meeting .event-type-badge {
+    background: var(--gos-accent-light);
+    color: var(--gos-accent-hover);
+}
+
+.gos-week-event-pill.event-type-other {
+    border-left-color: var(--gos-gray-400);
+}
+.gos-week-event-pill.event-type-other .event-type-badge {
+    background: var(--gos-gray-100);
+    color: var(--gos-gray-600);
+}
+
+/* Week Event Status Indicators */
+.gos-week-event-pill .event-status-indicator {
+    position: absolute;
+    top: var(--gos-space-2);
+    right: var(--gos-space-2);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px white;
+}
+
+.gos-week-event-pill.event-status-scheduled .event-status-indicator {
+    background: var(--gos-info);
+}
+
+.gos-week-event-pill.event-status-confirmed .event-status-indicator {
+    background: var(--gos-primary);
+}
+
+.gos-week-event-pill.event-status-in_progress .event-status-indicator {
+    background: var(--gos-accent);
+}
+
+.gos-week-event-pill.event-status-completed .event-status-indicator {
+    background: var(--gos-success);
+}
+
+.gos-week-event-pill.event-status-cancelled .event-status-indicator {
+    background: var(--gos-danger);
+}
+
+.gos-week-event-pill.event-status-rescheduled .event-status-indicator {
+    background: var(--gos-secondary);
+}
+
+.gos-week-event-pill .event-duration {
+    font-size: 0.75rem;
+    color: var(--gos-gray-600);
+}
+
+.gos-week-event-pill .event-status-indicator {
+    position: absolute;
+    top: var(--gos-space-2);
+    right: var(--gos-space-2);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px white;
+}
+
+/* ============================================================================
+   DAY VIEW - FULL-HEIGHT WITH STICKY HEADERS
+   ============================================================================ */
+
+.gos-day-view-modern {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: white;
+    position: relative;
+    z-index: 1;
+}
+
+/* Sticky Header */
+.gos-day-sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: grid;
+    grid-template-columns: 80px repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1px;
+    background: var(--gos-gray-200);
+    padding: var(--gos-space-4);
+    border-bottom: 2px solid var(--gos-gray-200);
+    box-shadow: var(--gos-shadow-sm);
+}
+
+.gos-day-time-corner {
+    background: var(--gos-gray-50);
+    padding: var(--gos-space-3);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--gos-gray-600);
+    text-transform: uppercase;
+    border-radius: var(--gos-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gos-day-fitter-header {
+    background: var(--gos-gray-50);
+    padding: var(--gos-space-3);
+    text-align: center;
+    border-radius: var(--gos-radius-sm);
+    display: flex;
+    flex-direction: column;
+    gap: var(--gos-space-1);
+}
+
+.gos-day-fitter-header .fitter-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--gos-gray-900);
+}
+
+.gos-day-fitter-header .fitter-stats {
+    font-size: 0.75rem;
+    color: var(--gos-gray-600);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--gos-space-2);
+}
+
+/* Day Grid Container */
+.gos-day-grid-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--gos-gray-100);
+}
+
+/* Hour Rows */
+.gos-day-hour-row {
+    display: grid;
+    grid-template-columns: 80px repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1px;
+    background: var(--gos-gray-100);
+    min-height: 80px;
+}
+
+.gos-day-hour-row.is-current {
+    background: var(--gos-primary-light);
+}
+
+.gos-day-time-label {
+    background: white;
+    padding: var(--gos-space-2);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--gos-gray-600);
+    text-align: right;
+    border-radius: 0;
+}
+
+.gos-day-hour-cell {
+    background: white;
+    padding: var(--gos-space-3);
+    border-radius: 0;
+    transition: all var(--gos-transition-fast);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gos-space-2);
+    position: relative;
+    border: none;
+}
+
+.gos-day-hour-cell:hover {
+    background: var(--gos-gray-50);
+    box-shadow: inset 0 0 0 2px var(--gos-primary-light);
+}
+
+.gos-day-add-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: var(--gos-space-1);
+    padding: var(--gos-space-2);
+    background: var(--gos-gray-100);
+    border: 1px dashed var(--gos-gray-300);
+    border-radius: var(--gos-radius-sm);
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--gos-gray-600);
+    cursor: pointer;
+    transition: all var(--gos-transition-fast);
+}
+
+.gos-day-hour-cell.is-empty:hover .gos-day-add-btn {
+    display: flex;
+}
+
+.gos-day-add-btn:hover {
+    background: var(--gos-primary-light);
+    border-color: var(--gos-primary);
+    color: var(--gos-primary);
+}
+
+/* Day Event Cards */
+.gos-day-event-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gos-space-2);
+    padding: var(--gos-space-3);
+    background: white;
+    border-left: 4px solid var(--gos-primary);
+    border-radius: var(--gos-radius-md);
+    box-shadow: var(--gos-shadow-sm);
+    transition: all var(--gos-transition-fast);
+    cursor: pointer;
+    position: relative;
+}
+
+.gos-day-event-card:hover {
+    transform: translateX(4px);
+    box-shadow: var(--gos-shadow-md);
+}
+
+.gos-day-event-card .event-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.gos-day-event-card .event-time {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--gos-gray-700);
+}
+
+.gos-day-event-card .event-duration {
+    font-size: 0.75rem;
+    color: var(--gos-gray-600);
+    background: var(--gos-gray-100);
+    padding: 2px 6px;
+    border-radius: var(--gos-radius-sm);
+}
+
+.gos-day-event-card .event-customer {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--gos-gray-900);
+}
+
+.gos-day-event-card .event-type-badge {
+    padding: 4px 8px;
+    border-radius: var(--gos-radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+/* Day Event Type Colors */
+.gos-day-event-card.event-type-survey {
+    border-left-color: var(--gos-info);
+    background: rgba(59, 130, 246, 0.02);
+}
+.gos-day-event-card.event-type-survey .event-type-badge {
+    background: rgba(59, 130, 246, 0.15);
+    color: var(--gos-info);
+}
+
+.gos-day-event-card.event-type-measure {
+    border-left-color: var(--gos-primary);
+    background: rgba(6, 182, 212, 0.02);
+}
+.gos-day-event-card.event-type-measure .event-type-badge {
+    background: var(--gos-primary-light);
+    color: var(--gos-primary-dark);
+}
+
+.gos-day-event-card.event-type-delivery {
+    border-left-color: var(--gos-success);
+    background: rgba(16, 185, 129, 0.02);
+}
+.gos-day-event-card.event-type-delivery .event-type-badge {
+    background: var(--gos-success-light);
+    color: var(--gos-success);
+}
+
+.gos-day-event-card.event-type-install {
+    border-left-color: var(--gos-accent);
+    background: rgba(245, 158, 11, 0.02);
+}
+.gos-day-event-card.event-type-install .event-type-badge {
+    background: var(--gos-accent-light);
+    color: var(--gos-accent);
+}
+
+.gos-day-event-card.event-type-service {
+    border-left-color: var(--gos-danger);
+    background: rgba(239, 68, 68, 0.02);
+}
+.gos-day-event-card.event-type-service .event-type-badge {
+    background: var(--gos-danger-light);
+    color: var(--gos-danger);
+}
+
+.gos-day-event-card.event-type-followup {
+    border-left-color: var(--gos-secondary);
+    background: rgba(139, 92, 246, 0.02);
+}
+.gos-day-event-card.event-type-followup .event-type-badge {
+    background: var(--gos-secondary-light);
+    color: var(--gos-secondary);
+}
+
+.gos-day-event-card.event-type-meeting {
+    border-left-color: var(--gos-accent);
+    background: rgba(245, 158, 11, 0.02);
+}
+.gos-day-event-card.event-type-meeting .event-type-badge {
+    background: var(--gos-accent-light);
+    color: var(--gos-accent-hover);
+}
+
+.gos-day-event-card.event-type-other {
+    border-left-color: var(--gos-gray-400);
+    background: rgba(100, 116, 139, 0.02);
+}
+.gos-day-event-card.event-type-other .event-type-badge {
+    background: var(--gos-gray-100);
+    color: var(--gos-gray-600);
+}
+
+/* Day Event Status Indicators */
+.gos-day-event-card.event-status-scheduled .event-status-indicator {
+    background: var(--gos-info);
+}
+.gos-day-event-card.event-status-confirmed .event-status-indicator {
+    background: var(--gos-primary);
+}
+.gos-day-event-card.event-status-in_progress .event-status-indicator {
+    background: var(--gos-accent);
+}
+.gos-day-event-card.event-status-completed .event-status-indicator {
+    background: var(--gos-success);
+}
+.gos-day-event-card.event-status-cancelled .event-status-indicator {
+    background: var(--gos-danger);
+}
+.gos-day-event-card.event-status-rescheduled .event-status-indicator {
+    background: var(--gos-secondary);
+}
+
+.gos-day-event-card .event-status-indicator {
+    position: absolute;
+    top: var(--gos-space-3);
+    right: var(--gos-space-3);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px white;
+}
+
+/* ============================================================================
+   TIMELINE VIEW - HORIZONTAL GANTT CHART
+   ============================================================================ */
+
+.gos-timeline-view-modern {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: white;
+    position: relative;
+    z-index: 1;
+}
+
+/* Timeline Header */
+.gos-timeline-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: grid;
+    grid-template-columns: 150px repeat(14, minmax(80px, 1fr));
+    gap: 1px;
+    background: var(--gos-gray-200);
+    padding: var(--gos-space-4);
+    border-bottom: 2px solid var(--gos-gray-200);
+    box-shadow: var(--gos-shadow-sm);
+}
+
+.gos-timeline-corner {
+    background: var(--gos-gray-50);
+    padding: var(--gos-space-3);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--gos-gray-600);
+    text-transform: uppercase;
+    border-radius: var(--gos-radius-sm);
+    display: flex;
+    align-items: center;
+}
+
+.gos-timeline-day-header {
+    background: var(--gos-gray-50);
+    padding: var(--gos-space-2);
+    text-align: center;
+    border-radius: var(--gos-radius-sm);
+    transition: all var(--gos-transition-fast);
+}
+
+.gos-timeline-day-header:hover {
+    background: white;
+}
+
+.gos-timeline-day-header.is-today {
+    background: var(--gos-primary-light);
+    border: 2px solid var(--gos-primary);
+}
+
+.gos-timeline-day-header.is-weekend {
+    background: var(--gos-gray-100);
+}
+
+.gos-timeline-day-header .day-name {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--gos-gray-600);
+    text-transform: uppercase;
+}
+
+.gos-timeline-day-header .day-date {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--gos-gray-900);
+    margin-top: var(--gos-space-1);
+}
+
+/* Timeline Body */
+.gos-timeline-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--gos-gray-100);
+}
+
+/* Timeline Fitter Rows */
+.gos-timeline-fitter-row {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 1px;
+    background: var(--gos-gray-100);
+    min-height: 60px;
+}
+
+.gos-timeline-fitter-label {
+    background: white;
+    padding: var(--gos-space-3);
+    border-radius: 0;
+    display: flex;
+    align-items: center;
+}
+
+.gos-timeline-fitter-label .fitter-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--gos-gray-900);
+}
+
+/* Gantt Track */
+.gos-timeline-gantt-track {
+    display: grid;
+    grid-template-columns: repeat(14, minmax(80px, 1fr));
+    gap: 1px;
+    background: var(--gos-gray-100);
+}
+
+.gos-timeline-day-cell {
+    background: white;
+    padding: var(--gos-space-2);
+    border-radius: 0;
+    transition: all var(--gos-transition-fast);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gos-space-1);
+    align-content: flex-start;
+    border: none;
+}
+
+.gos-timeline-day-cell.is-today {
+    background: var(--gos-primary-light);
+    box-shadow: inset 0 0 0 2px var(--gos-primary);
+}
+
+.gos-timeline-day-cell.is-weekend {
+    background: var(--gos-gray-50);
+}
+
+/* Timeline Event Blocks */
+.gos-timeline-event-block {
+    display: flex;
+    align-items: center;
+    gap: var(--gos-space-1);
+    padding: var(--gos-space-1) var(--gos-space-2);
+    border-radius: var(--gos-radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    transition: all var(--gos-transition-fast);
+    position: relative;
+    white-space: nowrap;
+}
+
+.gos-timeline-event-block:hover {
+    transform: scale(1.05);
+    box-shadow: var(--gos-shadow-md);
+    z-index: 5;
+}
+
+.gos-timeline-event-block .event-ref {
+    font-size: 0.6875rem;
+}
+
+.gos-timeline-event-block .event-type-icon {
+    width: 16px;
+    height: 16px;
+    border-radius: var(--gos-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.625rem;
+}
+
+.gos-timeline-event-block .event-status-dot {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+}
+
+/* Timeline Event Type Colors */
+.gos-timeline-event-block.event-type-survey {
+    background: var(--gos-info);
+    border-color: var(--gos-info);
+}
+.gos-timeline-event-block.event-type-survey .event-type-icon {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.gos-timeline-event-block.event-type-measure {
+    background: var(--gos-primary);
+    border-color: var(--gos-primary);
+}
+.gos-timeline-event-block.event-type-measure .event-type-icon {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.gos-timeline-event-block.event-type-delivery {
+    background: var(--gos-success);
+    border-color: var(--gos-success);
+}
+.gos-timeline-event-block.event-type-delivery .event-type-icon {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.gos-timeline-event-block.event-type-install {
+    background: var(--gos-accent);
+    border-color: var(--gos-accent);
+}
+.gos-timeline-event-block.event-type-install .event-type-icon {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.gos-timeline-event-block.event-type-service {
+    background: var(--gos-danger);
+    border-color: var(--gos-danger);
+}
+.gos-timeline-event-block.event-type-service .event-type-icon {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.gos-timeline-event-block.event-type-followup {
+    background: var(--gos-secondary);
+    border-color: var(--gos-secondary);
+}
+.gos-timeline-event-block.event-type-followup .event-type-icon {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.gos-timeline-event-block.event-type-meeting {
+    background: var(--gos-accent);
+    border-color: var(--gos-accent);
+}
+.gos-timeline-event-block.event-type-meeting .event-type-icon {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.gos-timeline-event-block.event-type-other {
+    background: var(--gos-gray-600);
+    border-color: var(--gos-gray-600);
+}
+.gos-timeline-event-block.event-type-other .event-type-icon {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Timeline Event Status Dots */
+.gos-timeline-event-block.event-status-scheduled .event-status-dot {
+    background: white;
+}
+.gos-timeline-event-block.event-status-confirmed .event-status-dot {
+    background: #22c55e;
+}
+.gos-timeline-event-block.event-status-in_progress .event-status-dot {
+    background: #fbbf24;
+}
+.gos-timeline-event-block.event-status-completed .event-status-dot {
+    background: white;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+}
+.gos-timeline-event-block.event-status-cancelled .event-status-dot {
+    background: #dc2626;
+}
+.gos-timeline-event-block.event-status-rescheduled .event-status-dot {
+    background: #a855f7;
+}
+
+/* ============================================================================
+   LIST VIEW - SIMPLIFIED TABLE
+   ============================================================================ */
+
+.gos-list-view-modern {
+    padding: 0;
+    background: white;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+}
+
+.gos-list-table-container {
+    border-radius: 0;
+    overflow: hidden;
+    box-shadow: none;
+    border: none;
+}
+
+.gos-list-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+.gos-list-table thead {
+    background: white;
+    border-bottom: 2px solid var(--gos-gray-100);
+}
+
+.gos-list-table th {
+    padding: var(--gos-space-3) var(--gos-space-4);
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--gos-gray-700);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.gos-list-table th.sortable {
+    cursor: pointer;
+    transition: all var(--gos-transition-fast);
+    user-select: none;
+}
+
+.gos-list-table th.sortable:hover {
+    background: var(--gos-gray-100);
+    color: var(--gos-gray-900);
+}
+
+.gos-list-table th .th-content {
+    display: flex;
+    align-items: center;
+    gap: var(--gos-space-2);
+}
+
+.gos-list-table th .sort-icon {
+    opacity: 0.4;
+    transition: opacity var(--gos-transition-fast);
+}
+
+.gos-list-table th.sortable:hover .sort-icon {
+    opacity: 1;
+}
+
+.gos-list-table tbody tr {
+    border-bottom: 1px solid var(--gos-gray-100);
+    transition: all var(--gos-transition-fast);
+}
+
+.gos-list-table tbody tr:nth-child(even) {
+    background: var(--gos-gray-50);
+}
+
+.gos-list-table tbody tr:hover {
+    background: var(--gos-primary-light);
+    cursor: pointer;
+}
+
+.gos-list-table td {
+    padding: var(--gos-space-3) var(--gos-space-4);
+    font-size: 0.875rem;
+    color: var(--gos-gray-900);
+}
+
+/* List Table - Date Column */
+.gos-list-table .date-time-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gos-space-1);
+}
+
+.gos-list-table .date-label {
+    font-weight: 500;
+    color: var(--gos-gray-900);
+}
+
+.gos-list-table .time-label {
+    font-size: 0.75rem;
+    color: var(--gos-gray-600);
+    font-family: var(--gos-font-mono);
+}
+
+/* List Table - Badges */
+.gos-list-table .fitter-badge {
+    display: inline-block;
+    padding: var(--gos-space-1) var(--gos-space-3);
+    background: var(--gos-gray-100);
+    border-radius: var(--gos-radius-pill);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--gos-gray-700);
+}
+
+.gos-list-table .type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--gos-space-1);
+    padding: var(--gos-space-1) var(--gos-space-3);
+    border-radius: var(--gos-radius-pill);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    border: 1px solid;
+}
+
+.gos-list-table .type-icon {
+    font-size: 0.75rem;
+}
+
+.gos-list-table .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--gos-space-2);
+    padding: var(--gos-space-1) var(--gos-space-3);
+    border-radius: var(--gos-radius-pill);
+    font-size: 0.8125rem;
+    font-weight: 500;
+}
+
+/* List View - Event Type Badge Colors */
+.gos-list-table .type-badge.event-type-survey {
+    background: rgba(59, 130, 246, 0.15);
+    color: var(--gos-info);
+    border-color: var(--gos-info);
+}
+
+.gos-list-table .type-badge.event-type-measure {
+    background: var(--gos-primary-light);
+    color: var(--gos-primary-dark);
+    border-color: var(--gos-primary);
+}
+
+.gos-list-table .type-badge.event-type-delivery {
+    background: var(--gos-success-light);
+    color: var(--gos-success);
+    border-color: var(--gos-success);
+}
+
+.gos-list-table .type-badge.event-type-install {
+    background: var(--gos-accent-light);
+    color: var(--gos-accent);
+    border-color: var(--gos-accent);
+}
+
+.gos-list-table .type-badge.event-type-service {
+    background: var(--gos-danger-light);
+    color: var(--gos-danger);
+    border-color: var(--gos-danger);
+}
+
+.gos-list-table .type-badge.event-type-followup {
+    background: var(--gos-secondary-light);
+    color: var(--gos-secondary);
+    border-color: var(--gos-secondary);
+}
+
+.gos-list-table .type-badge.event-type-meeting {
+    background: var(--gos-accent-light);
+    color: var(--gos-accent-hover);
+    border-color: var(--gos-accent);
+}
+
+.gos-list-table .type-badge.event-type-other {
+    background: var(--gos-gray-100);
+    color: var(--gos-gray-600);
+    border-color: var(--gos-gray-400);
+}
+
+/* List View - Event Status Badge Colors */
+.gos-list-table .status-badge.event-status-scheduled {
+    background: rgba(59, 130, 246, 0.15);
+    color: var(--gos-info);
+}
+.gos-list-table .status-badge.event-status-scheduled .status-indicator {
+    background: var(--gos-info);
+}
+
+.gos-list-table .status-badge.event-status-confirmed {
+    background: var(--gos-primary-light);
+    color: var(--gos-primary-dark);
+}
+.gos-list-table .status-badge.event-status-confirmed .status-indicator {
+    background: var(--gos-primary);
+}
+
+.gos-list-table .status-badge.event-status-in_progress {
+    background: var(--gos-accent-light);
+    color: var(--gos-accent);
+}
+.gos-list-table .status-badge.event-status-in_progress .status-indicator {
+    background: var(--gos-accent);
+}
+
+.gos-list-table .status-badge.event-status-completed {
+    background: var(--gos-success-light);
+    color: var(--gos-success);
+}
+.gos-list-table .status-badge.event-status-completed .status-indicator {
+    background: var(--gos-success);
+}
+
+.gos-list-table .status-badge.event-status-cancelled {
+    background: var(--gos-danger-light);
+    color: var(--gos-danger);
+}
+.gos-list-table .status-badge.event-status-cancelled .status-indicator {
+    background: var(--gos-danger);
+}
+
+.gos-list-table .status-badge.event-status-rescheduled {
+    background: var(--gos-secondary-light);
+    color: var(--gos-secondary);
+}
+.gos-list-table .status-badge.event-status-rescheduled .status-indicator {
+    background: var(--gos-secondary);
+}
+
+.gos-list-table .status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.gos-list-table .duration-value {
+    font-family: var(--gos-font-mono);
+    font-weight: 600;
+    color: var(--gos-gray-700);
+}
+
+.gos-list-table .customer-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gos-space-1);
+}
+
+.gos-list-table .customer-name {
+    font-weight: 500;
+    color: var(--gos-gray-900);
+}
+
+.gos-list-table .job-ref {
+    font-size: 0.75rem;
+    color: var(--gos-gray-600);
+    font-family: var(--gos-font-mono);
+}
+
+/* List Table - Actions */
+.gos-list-table .action-buttons {
+    display: flex;
+    gap: var(--gos-space-2);
+}
+
+.gos-list-table .action-btn-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: var(--gos-gray-100);
+    border: none;
+    border-radius: var(--gos-radius-sm);
+    cursor: pointer;
+    color: var(--gos-gray-600);
+    transition: all var(--gos-transition-fast);
+}
+
+.gos-list-table .action-btn-icon:hover {
+    background: var(--gos-gray-200);
+    color: var(--gos-gray-900);
+    transform: scale(1.1);
+}
+
+.gos-list-table .action-btn-icon[data-action="delete"]:hover {
+    background: #fee2e2;
+    color: var(--gos-danger);
+}
+
+/* ============================================================================
+   CARD GRID VIEW - QUOTES-STYLE LAYOUT
+   ============================================================================ */
+
+.gos-events-grid-container {
+    padding: var(--gos-space-6);
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 400px));
+    justify-content: start;
+    gap: var(--gos-space-6);
+    background: var(--gos-gray-100);
+    height: 100%;
+    overflow-y: auto;
+}
+
+.gos-event-card-modern {
+    border: 1px solid var(--gos-gray-200);
+    border-radius: var(--gos-radius-lg);
+    background: white;
+    box-shadow: var(--gos-shadow-sm);
+    transition: all var(--gos-transition-base);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.gos-event-card-modern:hover {
+    box-shadow: var(--gos-shadow-lg);
+    transform: translateY(-4px);
+    border-color: var(--gos-primary);
+}
+
+.gos-event-card-modern:focus-within {
+    outline: 2px solid var(--gos-primary);
+    outline-offset: 2px;
+}
+
+/* Card Header */
+.gos-event-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--gos-space-4) var(--gos-space-5);
+    border-bottom: 1px solid var(--gos-gray-100);
+    background: white;
+}
+
+.gos-event-card-title {
+    margin: 0;
+    font-size: 1.0625rem;
+    font-weight: 600;
+    color: var(--gos-gray-900);
+    flex-shrink: 0;
+    margin-right: var(--gos-space-4);
+}
+
+.gos-event-card-status-group {
+    display: flex;
+    gap: var(--gos-space-2);
+}
+
+.gos-event-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--gos-space-1);
+    padding: var(--gos-space-1) var(--gos-space-3);
+    border-radius: var(--gos-radius-pill);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all var(--gos-transition-fast);
+}
+
+.gos-event-status-pill:hover {
+    filter: brightness(1.1);
+    transform: scale(1.05);
+}
+
+.gos-event-status-pill.status-scheduled {
+    background: var(--gos-info-light);
+    color: var(--gos-info);
+}
+
+.gos-event-status-pill.status-confirmed {
+    background: var(--gos-primary-light);
+    color: var(--gos-primary-dark);
+}
+
+.gos-event-status-pill.status-completed {
+    background: var(--gos-success-light);
+    color: var(--gos-success);
+}
+
+.gos-event-status-pill.status-cancelled {
+    background: var(--gos-danger-light);
+    color: var(--gos-danger);
+}
+
+/* Card Body */
+.gos-event-card-body {
+    padding: var(--gos-space-5);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--gos-space-4);
+    flex-grow: 1;
+}
+
+.gos-event-card-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gos-space-1);
+}
+
+.gos-event-card-field-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--gos-gray-600);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.gos-event-card-field-value {
+    font-size: 0.9375rem;
+    color: var(--gos-gray-900);
+    font-weight: 500;
+}
+
+.gos-event-card-field-value.mono {
+    font-family: var(--gos-font-mono);
+    color: var(--gos-gray-700);
+}
+
+.gos-event-card-field-value.highlight {
+    color: var(--gos-primary);
+    font-weight: 600;
+}
+
+/* Card Footer */
+.gos-event-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--gos-space-3) var(--gos-space-5);
+    background: var(--gos-gray-50);
+    border-top: 1px solid var(--gos-gray-100);
+    font-size: 0.8125rem;
+    color: var(--gos-gray-600);
+}
+
+.gos-event-card-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--gos-space-4);
+}
+
+.gos-event-card-meta-item {
+    display: flex;
+    align-items: center;
+    gap: var(--gos-space-1);
+}
+
+.gos-event-card-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--gos-space-2);
+}
+
+.gos-event-view-hint {
+    font-weight: 500;
+    color: var(--gos-primary);
+    opacity: 0;
+    transition: opacity var(--gos-transition-base);
+}
+
+.gos-event-card-modern:hover .gos-event-view-hint {
+    opacity: 1;
+}
+
+.gos-event-delete-btn {
+    background: #fee2e2;
+    color: var(--gos-danger);
+    border: 1px solid #fecaca;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 1.125rem;
+    line-height: 20px;
+    text-align: center;
+    padding: 0;
+    cursor: pointer;
+    opacity: 0;
+    transition: all var(--gos-transition-base);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gos-event-card-modern:hover .gos-event-delete-btn {
+    opacity: 1;
+}
+
+.gos-event-delete-btn:hover {
+    background: var(--gos-danger);
+    color: white;
+    transform: scale(1.1);
+}
+
+/* Type Badges in Cards */
+.gos-event-type-badge-card {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--gos-space-2);
+    padding: var(--gos-space-2) var(--gos-space-3);
+    border-radius: var(--gos-radius-md);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    border: 1px solid;
+}
+
+.gos-event-type-badge-card.type-measure {
+    background: var(--gos-info-light);
+    color: var(--gos-info);
+    border-color: var(--gos-info);
+}
+
+.gos-event-type-badge-card.type-install {
+    background: var(--gos-success-light);
+    color: var(--gos-success);
+    border-color: var(--gos-success);
+}
+
+.gos-event-type-badge-card.type-repair {
+    background: var(--gos-warning-light);
+    color: var(--gos-warning);
+    border-color: var(--gos-warning);
+}
+
+.gos-event-type-badge-card.type-consultation {
+    background: var(--gos-secondary-light);
+    color: var(--gos-secondary);
+    border-color: var(--gos-secondary);
+}
+
+/* Fitter Badge in Cards */
+.gos-fitter-badge-card {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--gos-space-2);
+    padding: var(--gos-space-2) var(--gos-space-3);
+    background: var(--gos-primary-light);
+    border: 1px solid var(--gos-primary);
+    border-radius: var(--gos-radius-pill);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--gos-primary-dark);
+}
+
+/* ============================================================================
+   EMPTY & LOADING STATES
+   ============================================================================ */
+
+.gos-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--gos-space-10);
+    text-align: center;
+    min-height: 400px;
+}
+
+.gos-empty-icon {
+    font-size: 4rem;
+    margin-bottom: var(--gos-space-4);
+    opacity: 0.5;
+}
+
+.gos-empty-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--gos-gray-900);
+    margin-bottom: var(--gos-space-2);
+}
+
+.gos-empty-message {
+    font-size: 0.9375rem;
+    color: var(--gos-gray-600);
+    margin-bottom: var(--gos-space-6);
+}
+
+.gos-btn-primary {
+    padding: var(--gos-space-3) var(--gos-space-6);
+    background: var(--gos-primary);
+    color: white;
+    border: none;
+    border-radius: var(--gos-radius-md);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--gos-transition-fast);
+    box-shadow: var(--gos-shadow-sm);
+}
+
+.gos-btn-primary:hover {
+    background: var(--gos-primary-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--gos-shadow-md);
+}
+
+.gos-loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--gos-space-10);
+    min-height: 400px;
+}
+
+.gos-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--gos-gray-200);
+    border-top-color: var(--gos-primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.gos-loading-message {
+    margin-top: var(--gos-space-4);
+    font-size: 0.9375rem;
+    color: var(--gos-gray-600);
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================ */
+
+@media (max-width: 1200px) {
+    .gos-topbar-center {
+        gap: var(--gos-space-2);
+    }
+    
+    .gos-view-pill span {
+        display: none;
+    }
+    
+    .gos-view-pill {
+        padding: var(--gos-space-2);
+    }
+}
+
+@media (max-width: 768px) {
+    .gos-diary-topbar {
+        flex-wrap: wrap;
+        height: auto;
+        padding: var(--gos-space-4);
+    }
+    
+    .gos-month-calendar {
+        grid-template-columns: 1fr;
+    }
+    
+    .gos-week-header-modern,
+    .gos-week-fitter-row {
+        grid-template-columns: 100px repeat(5, 1fr);
+    }
+    
+    .gos-list-table {
+        font-size: 0.8125rem;
+    }
+}
+
+/* ============================================================================
+   UTILITY CLASSES
+   ============================================================================ */
+
+.gos-hidden {
+    display: none !important;
+}
+
+.gos-fadeIn {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.gos-slideIn {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Z-Index Layer System - Prevent overlapping issues */
+.gos-z-topbar {
+    z-index: 100 !important;
+}
+
+.gos-z-sticky {
+    z-index: 10 !important;
+}
+
+.gos-z-content {
+    z-index: 1 !important;
+}
+
+.gos-z-overlay {
+    z-index: 200 !important;
+}
+
+.gos-z-modal {
+    z-index: 300 !important;
+}
+
+/* ============================================================================
+   PRINT STYLES
+   ============================================================================ */
+
+@media print {
+    .gos-diary-topbar,
+    .gos-filter-btn,
+    .gos-new-event-btn,
+    .gos-action-buttons {
+        display: none !important;
+    }
+    
+    .gos-diary-body {
+        overflow: visible !important;
+    }
+    
+    .gos-month-cell-modern,
+    .gos-week-day-cell,
+    .gos-list-table tbody tr {
+        break-inside: avoid;
+    }
+}
+
+/* ============================================================================
+   END OF STYLESHEET
+   ============================================================================ */

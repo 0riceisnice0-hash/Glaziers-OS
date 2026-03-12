@@ -13,8 +13,8 @@ jQuery(function($) {
     // Initial settings data, will be populated from the REST endpoints
     let settingsData = {
         pricing:     { window: 0, door: 0 },
-        statuses:    { lead: [], install: [] },
-        form_fields: []
+        form_fields: [],
+        pricing_rules: []
     };
 
     function render() {
@@ -25,20 +25,20 @@ jQuery(function($) {
             </div>
             <div class="gsa-settings-layout">
                 <nav class="gsa-settings-tabs">
-                    <a href="#pricing"  class="gsa-settings-tab active">Pricing</a>
-                    <a href="#statuses" class="gsa-settings-tab">Statuses</a>
+                    <a href="#pricing"  class="gsa-settings-tab active">Simple Pricing</a>
+                    <a href="#pricing-rules" class="gsa-settings-tab">Pricing Rules</a>
                     <a href="#form"     class="gsa-settings-tab">Contact Form</a>
                 </nav>
                 <div class="gsa-settings-content">
                     <div id="gsa-settings-pricing"  class="gsa-settings-panel active"></div>
-                    <div id="gsa-settings-statuses" class="gsa-settings-panel"></div>
+                    <div id="gsa-settings-pricing-rules" class="gsa-settings-panel"></div>
                     <div id="gsa-settings-form"     class="gsa-settings-panel"></div>
                 </div>
             </div>
         `);
 
         renderPricing();
-        renderStatuses();
+        renderPricingRules();
         renderForm();
         attachTabHandlers();
     }
@@ -46,7 +46,7 @@ jQuery(function($) {
     function attachTabHandlers() {
         $panel.on('click', '.gsa-settings-tab', function(e) {
             e.preventDefault();
-            const target = $(this).attr('href').substring(1); // "pricing", "statuses", or "form"
+            const target = $(this).attr('href').substring(1);
 
             $panel.find('.gsa-settings-tab').removeClass('active');
             $(this).addClass('active');
@@ -74,37 +74,35 @@ jQuery(function($) {
         `);
     }
 
-    // --- Statuses Tab ---
-    function renderStatuses() {
-        const $c = $('#gsa-settings-statuses');
-        $c.html(`
-            <h3>Quote Statuses</h3>
-            <div class="gsa-inner-tabs">
-                <button class="gsa-inner-tab-btn active" data-target="lead">Lead Statuses</button>
-                <button class="gsa-inner-tab-btn" data-target="install">Install Statuses</button>
-            </div>
-            <div id="gsa-status-content-lead"    class="gsa-inner-tab-content active"></div>
-            <div id="gsa-status-content-install" class="gsa-inner-tab-content"></div>
-            <hr>
-            <button id="save-statuses" class="gos-button">Save All Statuses</button>
-            <div id="statuses-feedback" class="gsa-feedback-message-inline"></div>
-        `);
-        renderStatusList('lead');
-        renderStatusList('install');
-    }
-    function renderStatusList(type) {
-        const rows = (settingsData.statuses[type] || []).map((st,i) => `
-            <div class="gsa-status-row" data-index="${i}">
-                <input type="text"  class="gos-input status-label" value="${st.label}">
-                <input type="color" class="gos-input status-color" value="${st.color}">
-                <button class="gos-button-icon remove-status">&times;</button>
-            </div>
+    // --- Pricing Rules Tab ---
+    function renderPricingRules() {
+        const $c = $('#gsa-settings-pricing-rules');
+        const rulesHtml = settingsData.pricing_rules.map((rule, index) => `
+            <tr data-index="${index}">
+                <td><input type="text" class="gos-input rule-product-type" value="${rule.product_type}"></td>
+                <td><input type="number" class="gos-input rule-base-price" value="${rule.base_price}"></td>
+                <td><input type="number" class="gos-input rule-price-per-sqm" value="${rule.price_per_sqm}"></td>
+                <td><button class="gos-button-icon remove-rule">&times;</button></td>
+            </tr>
         `).join('');
-        $(`#gsa-status-content-${type}`).html(`
-            <div class="gsa-status-list">${rows}</div>
-            <button class="gos-button add-status-btn" data-type="${type}">
-              Add ${type.charAt(0).toUpperCase()+type.slice(1)} Status
-            </button>
+
+        $c.html(`
+            <h3>Pricing Rules</h3>
+            <table class="gsa-table">
+                <thead>
+                    <tr>
+                        <th>Product Type</th>
+                        <th>Base Price (£)</th>
+                        <th>Price per m² (£)</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>${rulesHtml}</tbody>
+            </table>
+            <button id="add-rule" class="gos-button">Add Rule</button>
+            <hr>
+            <button id="save-pricing-rules" class="gos-button">Save Rules</button>
+            <div id="pricing-rules-feedback" class="gsa-feedback-message-inline"></div>
         `);
     }
 
@@ -180,16 +178,22 @@ jQuery(function($) {
     // Load all settings from the REST API
     async function loadAllSettings() {
         try {
-            const [pr, sr, fr] = await Promise.all([
-                fetch('/wp-json/glazieros/v1/settings/pricing'),
-                fetch('/wp-json/glazieros/v1/settings/statuses'),
-                fetch('/wp-json/glazieros/v1/settings/form')
+            const [pr, fr, prr] = await Promise.all([
+                fetch('/wp-json/glazieros/v1/settings/pricing', {
+                    headers: { 'X-WP-Nonce': wpApiSettings.nonce }
+                }),
+                fetch('/wp-json/glazieros/v1/settings/form', {
+                    headers: { 'X-WP-Nonce': wpApiSettings.nonce }
+                }),
+                fetch('/wp-json/glazieros/v1/pricing-rules', {
+                    headers: { 'X-WP-Nonce': wpApiSettings.nonce }
+                })
             ]);
-            if (!pr.ok||!sr.ok||!fr.ok) throw new Error('Failed to load settings');
+            if (!pr.ok||!fr.ok||!prr.ok) throw new Error('Failed to load settings');
 
             settingsData.pricing     = await pr.json();
-            settingsData.statuses    = await sr.json();
             const fetchedFormFields  = await fr.json();
+            settingsData.pricing_rules = await prr.json();
 
             settingsData.form_fields = Array.isArray(fetchedFormFields) && fetchedFormFields.length>0
               ? fetchedFormFields
@@ -211,7 +215,12 @@ jQuery(function($) {
             };
             try {
                 const res = await fetch('/wp-json/glazieros/v1/settings/pricing', {
-                    method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-WP-Nonce': wpApiSettings.nonce
+                    },
+                    body: JSON.stringify(body)
                 });
                 if (!res.ok) throw new Error(await res.text());
                 $('#pricing-feedback').text('✅ Saved').show().delay(2000).fadeOut();
@@ -220,50 +229,42 @@ jQuery(function($) {
             }
         });
 
-        // Statuses handlers…
-        $panel.on('click', '.gsa-inner-tab-btn', function() {
-            const t = $(this).data('target');
-            $('.gsa-inner-tab-btn').removeClass('active');
-            $(this).addClass('active');
-            $('.gsa-inner-tab-content').removeClass('active');
-            $(`#gsa-status-content-${t}`).addClass('active');
-        });
-        $panel.on('click', '.add-status-btn', function() {
-            const t = $(this).data('type');
-            $(`#gsa-status-content-${t} .gsa-status-list`).append(`
-              <div class="gsa-status-row">
-                <input type="text" class="gos-input status-label" value="New Status">
-                <input type="color" class="gos-input status-color" value="#cccccc">
-                <button class="gos-button-icon remove-status">&times;</button>
-              </div>`);
-        });
-        $panel.on('click', '.remove-status', function() {
-            $(this).closest('.gsa-status-row').remove();
-        });
-        $panel.on('click', '#save-statuses', async () => {
-            const newS = { lead: [], install: [] };
-            $('#gsa-status-content-lead .gsa-status-row').each(function() {
-                newS.lead.push({
-                    label: $(this).find('.status-label').val(),
-                    color: $(this).find('.status-color').val()
-                });
-            });
-            $('#gsa-status-content-install .gsa-status-row').each(function() {
-                newS.install.push({
-                    label: $(this).find('.status-label').val(),
-                    color: $(this).find('.status-color').val()
+        // Save Pricing Rules
+        $panel.on('click', '#save-pricing-rules', async () => {
+            const rules = [];
+            $('#gsa-settings-pricing-rules tbody tr').each(function() {
+                const $row = $(this);
+                rules.push({
+                    product_type: $row.find('.rule-product-type').val(),
+                    base_price: Number($row.find('.rule-base-price').val()),
+                    price_per_sqm: Number($row.find('.rule-price-per-sqm').val()),
                 });
             });
             try {
-                const res = await fetch('/wp-json/glazieros/v1/settings/statuses', {
-                    method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(newS)
+                const res = await fetch('/wp-json/glazieros/v1/pricing-rules', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-WP-Nonce': wpApiSettings.nonce
+                    },
+                    body: JSON.stringify(rules)
                 });
                 if (!res.ok) throw new Error(await res.text());
-                settingsData.statuses = newS;
-                $('#statuses-feedback').text('✅ Saved').show().delay(2000).fadeOut();
+                $('#pricing-rules-feedback').text('✅ Saved').show().delay(2000).fadeOut();
             } catch(e) {
-                $('#statuses-feedback').text(`⚠️ ${e.message}`).show();
+                $('#pricing-rules-feedback').text(`⚠️ ${e.message}`).show();
             }
+        });
+
+        $panel.on('click', '#add-rule', () => {
+            settingsData.pricing_rules.push({ product_type: '', base_price: 0, price_per_sqm: 0 });
+            renderPricingRules();
+        });
+
+        $panel.on('click', '.remove-rule', function() {
+            const index = $(this).closest('tr').data('index');
+            settingsData.pricing_rules.splice(index, 1);
+            renderPricingRules();
         });
 
         // Preset: All Information
@@ -309,7 +310,12 @@ jQuery(function($) {
             });
             try {
                 const res = await fetch('/wp-json/glazieros/v1/settings/form', {
-                    method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(updated)
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-WP-Nonce': wpApiSettings.nonce
+                    },
+                    body: JSON.stringify(updated)
                 });
                 if (!res.ok) throw new Error(await res.text());
                 settingsData.form_fields = updated;
@@ -327,7 +333,7 @@ jQuery(function($) {
             .gsa-settings-layout { display:flex;height:100%; }
             .gsa-settings-tabs { width:200px;background:#f8f9fa;border-right:1px solid #e0e0e0;padding-top:1rem; }
             .gsa-settings-tab { display:block;padding:.75rem 1.5rem;color:#555;text-decoration:none;border-left:3px solid transparent; }
-            .gsa-settings-tab.active { border-left-color:#4e73df;background:#fff;color:#222;font-weight:600; }
+            .gsa-settings-tab.active { border-left-color:#06b6d4;background:#fff;color:#222;font-weight:600; }
             .gsa-settings-content { flex:1;padding:2rem;overflow-y:auto;background:#fff; }
             .gsa-settings-panel { display:none; }
             .gsa-settings-panel.active { display:block; }

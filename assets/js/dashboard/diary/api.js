@@ -8,8 +8,12 @@ window.GOS_DIARY.api = {
      */
     fetchInitialData: async function() {
         return Promise.all([
-            fetch('/wp-json/glazieros/v1/jobs').then(r => r.json()),
-            fetch('/wp-json/glazieros/v1/fitters').then(r => r.json())
+            fetch('/wp-json/glazieros/v1/jobs', {
+                headers: { 'X-WP-Nonce': wpApiSettings.nonce }
+            }).then(r => r.json()),
+            fetch('/wp-json/glazieros/v1/fitters', {
+                headers: { 'X-WP-Nonce': wpApiSettings.nonce }
+            }).then(r => r.json())
         ]);
     },
 
@@ -20,7 +24,9 @@ window.GOS_DIARY.api = {
      */
     fetchAllSchedules: async function(jobs) {
         const schedulePromises = jobs.map(job =>
-            fetch(`/wp-json/glazieros/v1/jobs/${job.id}/schedule`)
+            fetch(`/wp-json/glazieros/v1/jobs/${job.id}/schedule`, {
+                headers: { 'X-WP-Nonce': wpApiSettings.nonce }
+            })
             .then(r => r.json())
             .then(body => (Array.isArray(body) ? body : []).map(entry => ({ ...entry, job })))
         );
