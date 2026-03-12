@@ -275,7 +275,9 @@ jQuery(document).on('gsa:panel:activated', (e, tab) => {
         const light = new THREE.DirectionalLight(0xffffff, 1);
         light.position.set(5, 5, 5);
         scene.add(light, new THREE.AmbientLight(0x404040));
-        const builder = (job.type === 'door' && window.GOSBuilders.testdoor) ? window.GOSBuilders.testdoor : window.GOSBuilders.testwindow;
+        const builder = (window.GOSBuilders.getBuilder && window.GOSBuilders.getBuilder(job.type))
+          || ((job.type && job.type.toLowerCase().indexOf('door') !== -1 && window.GOSBuilders.testdoor)
+              ? window.GOSBuilders.testdoor : window.GOSBuilders.testwindow);
         const mesh = builder({
           width: Number(job.width) || 0.9,
           height: Number(job.height) || 1.2,
